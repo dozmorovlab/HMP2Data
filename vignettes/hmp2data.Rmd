@@ -1,0 +1,31 @@
+---
+title: "HMP2Data"
+author: "John Stansfield & Mikhail Dozmorov"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Introduction
+
+# Features
+
+# Exporting Data to CSV, SAS, SPSS, and STATA Formats
+
+To our knowledge, R and Bioconductor provide the most and best methods for the
+analysis of microbiome data. However, we realize they are not the only analysis
+environments and wish to provide methods to export the data from
+`r BiocStyle::Biocpkg("HMP16SData")` to CSV, SAS, SPSS, and STATA formats. As we
+do not use these other languages regularly, we are unaware of how to represent
+phylogenitic trees in them and will not attempt to export the trees here.
