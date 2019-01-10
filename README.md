@@ -15,9 +15,3 @@ follows.
 BiocManager::install("HMP2Data")
 ```
 
-Once installed, *[HMP2Data](http://bioconductor.org/packages/HMP2Data)*
-provides two functions to access data вЂ“ one for variable region 1вЂ“3 and another
-for variable region 3вЂ“5. When called, as follows, the functions will download
-data from an *[ExperimentHub](http://bioconductor.org/packages/ExperimentHub)*
-Amazon S3 (Simple Storage Service) bucket over `https` or load data from a local
-cache.
