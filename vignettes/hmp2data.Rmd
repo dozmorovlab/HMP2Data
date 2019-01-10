@@ -19,7 +19,49 @@ knitr::opts_chunk$set(
 
 # Introduction
 
+`HMP2Data` is a Bioconductor ExperimentData package of the Human Microbiome Project 2 (HMP2). It includes 16S rRNA sequencing data and cytokine data from the Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI) study, 16S and cytokine data for Type 2 diabetes patients, and 16S and cytokine data for Inflammatory bowel disease. Processed data is provided as `MultiAssayExerpiment` objects or `SummarizedExperiment` objects. 
+
+`HMP2Data` can be installed using `BiocManager` as follows.
+
+```{r}
+BiocManager::install("HMP2Data")
+```
+
+Once installed `HMP2Data` provides functions to access the HMP2 data. When called, as follows, the funcctions will download data from an `ExperimentHub` Amazon S3 (Simple Storage Service) bucket over `https` or load data from a local cache.
+
+The MOMS-PI 16S data can be loaded as follows.
+
+```{r}
+data("momspi16S")
+momspi16S
+```
+
+Here we have a `phyloseq` object containing the 16S rRNA seq data for 7,665 taxa and 9,107 samples. The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
+
+```{r}
+data("momspiCytokines")
+momspiCytokines
+```
+
+The cytokine data contains data for 29 cytokines over 872 samples.
+
 # Features
+
+## Frequency Table Generation
+
+The MOMS-PI 16S data contains samples from 5 body sites. The number of samples from each site can be displayed as follows.
+
+```{r}
+table(sample_data(momspi16S)$sample_body_site)
+```
+
+
+The MOMS-PI cytokine data contains samples from 3 body sites.
+
+```{r}
+table(colData(momspiCytokines)$sample_body_site)
+```
+
 
 # Exporting Data to CSV, SAS, SPSS, and STATA Formats
 
@@ -29,3 +71,54 @@ environments and wish to provide methods to export the data from
 `r BiocStyle::Biocpkg("HMP16SData")` to CSV, SAS, SPSS, and STATA formats. As we
 do not use these other languages regularly, we are unaware of how to represent
 phylogenitic trees in them and will not attempt to export the trees here.
+
+
+## Preparing the data
+
+For `SummarizedExperiment` objects we will need to separate the data and metadata first before exportation. First make a data.frame for participant data.
+
+```{r}
+momspi_participants <- colData(momspiCytokines)
+```
+
+Then we need to pull out the data matrix.
+
+```{r}
+momspi_cytokines <- assay(momspiCytokines)
+```
+
+For `phyloseq` objects the data, metadata, and taxonomy can be separated as follows. First pull out metadata.
+
+```{r}
+momspi16S_participants <- sample_data(momspi16S)
+```
+
+Next, we can save the counts data as a matrix.
+
+```{r}
+momspi16s_data <- as.matrix(otu_table(momspi16S))
+```
+
+Finally, the taxonomy table can be extracted.
+
+```{r}
+momspi16s_taxa <- tax_table(momspi16S) %>% as.data.frame()
+```
+
+## Save data as CSV
+
+The data can be saved as `.csv` files as follows.
+
+```{r}
+library(readr)
+write_csv(momspi_participants, "~/momspi_participants.csv")
+write_csv(momspi_cytokines, "~/momspi_cytokines.csv")
+```
+
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
