@@ -5,6 +5,11 @@ output: html_document
 # To Do
 
 - Fix lack of row names in `write_csv(data.frame(momspi_cytokines), "momspi_cytokines.csv")`, make sure they are saved into the file
-- request for experiment hub
+
 - make summarizedexperiment for IBD and phyloseq object
+    - `biom` files are at https://www.dropbox.com/s/a7xe6zr0a8kwqhv/ibd.zip?dl=0. Note, there are two folders, `16s` and `wgs`, read `biom` files from both
 - make summarizedexperiment for T2 diabetes and phyloseq object
+    - `biom` files are at https://www.dropbox.com/s/9qhwidjezgolkkk/t2d.zip?dl=0.
+- Explore `biomformat::read_biom` and `phyloseq::import_biom`. I ran into (known but unsolved) trouble reading some of them in. Develop a method to skip on error and read the next file, note those that did and did not read. Look inside them, some are text-based JSON, some are binary. But I cannot even read JSON. Find out why, google for generic options.
+
+- request for experiment hub
