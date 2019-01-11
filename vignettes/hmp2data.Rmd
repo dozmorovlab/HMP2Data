@@ -27,36 +27,40 @@ knitr::opts_chunk$set(
 BiocManager::install("HMP2Data")
 ```
 
-Once installed `HMP2Data` provides functions to access the HMP2 data. When called, as follows, the funcctions will download data from an `ExperimentHub` Amazon S3 (Simple Storage Service) bucket over `https` or load data from a local cache.
+Once installed, `HMP2Data` provides functions to access the HMP2 data. When called, as follows, the functions will download data from an `ExperimentHub` Amazon S3 (Simple Storage Service) bucket over `https` or load data from a local cache.
 
 The MOMS-PI 16S data can be loaded as follows.
 
 ```{r}
+library(HMP2Data)
+library(phyloseq)
+library(SummarizedExperiment)
+
 data("momspi16S")
 momspi16S
 ```
 
-Here we have a `phyloseq` object containing the 16S rRNA seq data for 7,665 taxa and 9,107 samples. The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
+Here we have a `phyloseq` object containing the 16S rRNA seq data for `r nrow(otu_table(momspi16S))` taxa and `r ncol(otu_table(momspi16S))` samples. The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
 
 ```{r}
 data("momspiCytokines")
 momspiCytokines
 ```
 
-The cytokine data contains data for 29 cytokines over 872 samples.
+The cytokine data contains data for `r nrow(momspiCytokines)` cytokines over `r ncol(momspiCytokines)` samples.
 
 # Features
 
 ## Frequency Table Generation
 
-The MOMS-PI 16S data contains samples from 5 body sites. The number of samples from each site can be displayed as follows.
+The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows.
 
 ```{r}
 table(sample_data(momspi16S)$sample_body_site)
 ```
 
 
-The MOMS-PI cytokine data contains samples from 3 body sites.
+The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiCytokines)$sample_body_site))` body sites.
 
 ```{r}
 table(colData(momspiCytokines)$sample_body_site)
@@ -70,12 +74,12 @@ analysis of microbiome data. However, we realize they are not the only analysis
 environments and wish to provide methods to export the data from
 `r BiocStyle::Biocpkg("HMP16SData")` to CSV, SAS, SPSS, and STATA formats. As we
 do not use these other languages regularly, we are unaware of how to represent
-phylogenitic trees in them and will not attempt to export the trees here.
+phylogenetic trees in them and will not attempt to export the trees here.
 
 
 ## Preparing the data
 
-For `SummarizedExperiment` objects we will need to separate the data and metadata first before exportation. First make a data.frame for participant data.
+For `SummarizedExperiment` objects, we will need to separate the data and metadata first before exportation. First, make a `data.frame` for participant data.
 
 ```{r}
 momspi_participants <- colData(momspiCytokines)
@@ -87,7 +91,7 @@ Then we need to pull out the data matrix.
 momspi_cytokines <- assay(momspiCytokines)
 ```
 
-For `phyloseq` objects the data, metadata, and taxonomy can be separated as follows. First pull out metadata.
+For `phyloseq` objects the data, metadata, and taxonomy can be separated as follows. First, pull out metadata.
 
 ```{r}
 momspi16S_participants <- sample_data(momspi16S)
