@@ -6,9 +6,5 @@ output: html_document
 
 - Fix lack of row names in `write_csv(data.frame(momspi_cytokines), "momspi_cytokines.csv")`, make sure they are saved into the file
 - request for experiment hub
-- make multiassayexperiment for MOMS-PI 16S and cytokines and phyloseq
-    - or, if commands are simple, describe in the vignette how to.
 - make summarizedexperiment for IBD and phyloseq object
 - make summarizedexperiment for T2 diabetes and phyloseq object
-- write vignette
-  - include sample annotation table for each object
