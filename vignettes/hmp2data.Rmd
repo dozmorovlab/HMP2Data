@@ -115,8 +115,8 @@ The data can be saved as `.csv` files as follows.
 
 ```{r}
 library(readr)
-write_csv(momspi_participants, "~/momspi_participants.csv")
-write_csv(momspi_cytokines, "~/momspi_cytokines.csv")
+write_csv(data.frame(file_id = rownames(momspi_participants), momspi_participants), "momspi_participants.csv")
+write_csv(data.frame(momspi_cytokines), "momspi_cytokines.csv")
 ```
 
 
