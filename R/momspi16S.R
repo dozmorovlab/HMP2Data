@@ -29,6 +29,7 @@
 #' }
 #'
 #' @import phyloseq
+#' @importFrom dplyr %>%
 #' @import AnnotationHub
 #' @import assertthat
 #' @import ExperimentHub
