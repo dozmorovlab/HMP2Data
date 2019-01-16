@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-`HMP2Data` is a Bioconductor ExperimentData package of the Human Microbiome Project 2 (HMP2). It includes 16S rRNA sequencing data and cytokine data from the Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI) study, 16S and cytokine data for Type 2 diabetes patients, and 16S and cytokine data for Inflammatory bowel disease. Processed data is provided as `MultiAssayExerpiment` objects or `SummarizedExperiment` objects. 
+`HMP2Data` is a Bioconductor ExperimentData package of the Human Microbiome Project 2 (HMP2). It includes 16S rRNA sequencing data and cytokine data from the Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI) study, 16S and cytokine data for Type 2 diabetes (T2D) patients, and 16S and cytokine data for Inflammatory bowel disease (IBD). Processed data is provided as `MultiAssayExerpiment` objects or `SummarizedExperiment` objects. 
 
 `HMP2Data` can be installed using `BiocManager` as follows.
 
@@ -49,6 +49,22 @@ momspiCytokines
 
 The cytokine data contains data for `r nrow(momspiCytokines)` cytokines over `r ncol(momspiCytokines)` samples.
 
+The IBD data can be loaded as follows.
+
+```{r}
+data("IBD16S")
+IBD16S
+```
+
+The the T2D data can be loaded like so.
+
+```{r}
+data("T2D16S")
+T2D16S
+```
+
+
+
 # Features
 
 ## Frequency Table Generation
@@ -65,6 +81,29 @@ The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiC
 ```{r}
 table(colData(momspiCytokines)$sample_body_site)
 ```
+
+The IBD data contains samples from feces from males and females and multiple races.
+
+```{r}
+table(sample_data(IBD16S)$subject_gender)
+
+table(sample_data(IBD16S)$subject_race)
+```
+
+The T2D data contains samples from the feces and nasal cavity.
+
+```{r}
+table(sample_data(T2D16S)$sample_body_site)
+```
+
+The demographics of the samples are shown below.
+
+```{r}
+table(sample_data(T2D16S)$subject_gender)
+
+table(sample_data(T2D16S)$subject_race)
+```
+
 
 
 # Exporting Data to CSV, SAS, SPSS, and STATA Formats
