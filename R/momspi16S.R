@@ -38,6 +38,4 @@
 #' @import methods
 #' @import readr
 #' @import S4Vectors
-#' @import tibble
-#' @import utils
 "momspi16S"

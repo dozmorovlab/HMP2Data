@@ -1,15 +1,13 @@
 Package: HMP2Data
-Title: 16s rRNA sequencing data from the Human Microbiome Project
+Title: 16s rRNA sequencing data from the Human Microbiome Project 2
 Version: 0.99.1
 Authors@R: person("John", "Stansfield", email = "stansfieldjc@vcu.edu", role = c("aut", "cre"))
 Description: 
     HMP2Data is a Bioconductor package of the Human Microbiome
-    Project (HMP) 16S rRNA sequencing data for variable regions 1<U+0432><U+0402>“3 and 3<U+0432><U+0402>“5. Raw
-    data files are provided in the package as downloaded from the HMP Data
-    Analysis and Coordination Center. Processed data is provided as
+    Project 2 (HMP2) 16S rRNA sequencing data. Processed data is provided as
     SummarizedExperiment class objects via ExperimentHub.
 Depends: R (>= 3.5.0)
-License: 
+License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
 Imports:
@@ -23,27 +21,23 @@ Imports:
     methods,
     readr,
     S4Vectors,
-    tibble,
-    utils
+    SummarizedExperiment,
+    phyloseq
 Suggests:
     Biobase,
     BiocCheck,
     BiocManager,
     BiocStyle,
-    circlize,
-    covr,
     cowplot,
-    curatedMetagenomicData,
-    dendextend,
     devtools,
     ggplot2,
     gridExtra,
     haven,
-    phyloseq,
     rmarkdown,
     roxygen2,
     stats,
-    testthat
+    testthat,
+    tibble
 biocViews:
     ExperimentData,
     ExperimentHub,

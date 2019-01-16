@@ -3,14 +3,14 @@
 \docType{data}
 \name{IBD16S}
 \alias{IBD16S}
-\title{HMP2 16S sequencing data for Irritable Bowel Disease (IBD)}
+\title{HMP2 16S sequencing data for Inflammatory Bowel Disease (IBD)}
 \format{A phyloseq object with 1,777 taxa and 1,435 samples.
 \subsection{OTU Table}{
     A counts matrix for the rRNA-seq results.
 }
 \subsection{Sample Data}{
    \describe{
-      \itme{file_id}{The file ID}
+      \item{file_id}{The file ID}
       \item{sample_id}{Sample identifier}
       \item{file_name}{Name of file data was from}
       \item{subject_id}{Participant identifier}

@@ -10,7 +10,7 @@
 }
 \subsection{Sample Data}{
    \describe{
-      \itme{file_id}{The file ID}
+      \item{file_id}{The file ID}
       \item{sample_id}{Sample identifier}
       \item{file_name}{Name of file data was from}
       \item{subject_id}{Participant identifier}

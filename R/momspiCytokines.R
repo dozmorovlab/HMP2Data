@@ -25,6 +25,6 @@
 #' }
 #'
 #'
-#' @import SummarizedExperiment
+#' @importClassesFrom SummarizedExperiment SummarizedExperiment
 "momspiCytokines"
 
