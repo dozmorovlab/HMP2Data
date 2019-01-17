@@ -1,4 +1,4 @@
-#' MOMS-PI 16S rRNA sequencing data
+#' Construct MOMS-PI 16S rRNA phyloseq object
 #'
 #' The Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI)
 #' was funded by the NIH Roadmap HUman Microbiome Project to
@@ -8,6 +8,7 @@
 #' object contains the 16S rRNA sequencing data that was collected.
 #' Also contained are the taxa data and participant metadata.
 #'
+#' @export
 #' @format A phyloseq object with 7,665 taxa and 9,107 samples.
 #' \subsection{OTU Table}{
 #'     A counts matrix for the rRNA-seq results.
@@ -39,4 +40,17 @@
 #' @import methods
 #' @import readr
 #' @import S4Vectors
-"momspi16S"
+#' @return a phyloseq object
+#' @examples momspi <- momspi16S()
+momspi16S <- function() {
+  # load data
+  data('momspi16S_mtx')
+  data('momspi16S_samp')
+  data('momspi16S_tax')
+
+  # create phyloseq object
+  momspi16S <- phyloseq(otu_table(momspi16S_mtx, taxa_are_rows = TRUE),
+                        sample_data(momspi16S_samp),
+                        tax_table(momspi16S_tax))
+  return(momspi16S)
+}

@@ -1,4 +1,4 @@
-#' MOMS-PI cytokines data
+#' Create MOMS-PI cytokines SummarizedExperiment object
 #'
 #' The Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI)
 #' was funded by the NIH Roadmap HUman Microbiome Project to
@@ -9,6 +9,7 @@
 #' object contains the cytokine data that was collected and
 #' the participant metadata.
 #'
+#' @export
 #' @format A SummarizedExperiment object with 29 features
 #' and 872 samples.
 #' \subsection{colData}{
@@ -26,5 +27,16 @@
 #'
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
-"momspiCytokines"
+#' @return A SummarizedExperiment object
+#' @examples momspiCyto <- momspiCytokines()
+momspiCytokines <- function() {
+  # load data
+  data('momspiCyto_mtx')
+  data('momspiCyto_samp')
+
+  # create phyloseq object
+  momspiCytokines <- SummarizedExperiment(momspiCyto_mtx, colData = momspiCyto_samp)
+  return(momspiCytokines)
+}
+
 

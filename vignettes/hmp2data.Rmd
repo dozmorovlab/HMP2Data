@@ -37,31 +37,31 @@ library(phyloseq)
 library(SummarizedExperiment)
 library(dplyr)
 
-data("momspi16S")
-momspi16S
+momspi <- momspi16S()
+momspi
 ```
 
-Here we have a `phyloseq` object containing the 16S rRNA seq data for `r nrow(otu_table(momspi16S))` taxa and `r ncol(otu_table(momspi16S))` samples. The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
+Here we have a `phyloseq` object containing the 16S rRNA seq data for `r nrow(otu_table(momspi))` taxa and `r ncol(otu_table(momspi))` samples. The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
 
 ```{r}
-data("momspiCytokines")
-momspiCytokines
+momspiCyto <- momspiCytokines()
+momspiCyto
 ```
 
-The cytokine data contains data for `r nrow(momspiCytokines)` cytokines over `r ncol(momspiCytokines)` samples.
+The cytokine data contains data for `r nrow(momspiCyto)` cytokines over `r ncol(momspiCyto)` samples.
 
 The IBD data can be loaded as follows.
 
 ```{r}
-data("IBD16S")
-IBD16S
+IBD <- IBD16S()
+IBD
 ```
 
 The the T2D data can be loaded like so.
 
 ```{r}
-data("T2D16S")
-T2D16S
+T2D <- T2D16S()
+T2D
 ```
 
 
@@ -70,39 +70,39 @@ T2D16S
 
 ## Frequency Table Generation
 
-The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows.
+The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows.
 
 ```{r}
-table(sample_data(momspi16S)$sample_body_site)
+table(sample_data(momspi)$sample_body_site)
 ```
 
 
-The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiCytokines)$sample_body_site))` body sites.
+The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiCyto)$sample_body_site))` body sites.
 
 ```{r}
-table(colData(momspiCytokines)$sample_body_site)
+table(colData(momspiCyto)$sample_body_site)
 ```
 
 The IBD data contains samples from feces from males and females and multiple races.
 
 ```{r}
-table(sample_data(IBD16S)$subject_gender)
+table(sample_data(IBD)$subject_gender)
 
-table(sample_data(IBD16S)$subject_race)
+table(sample_data(IBD)$subject_race)
 ```
 
 The T2D data contains samples from the feces and nasal cavity.
 
 ```{r}
-table(sample_data(T2D16S)$sample_body_site)
+table(sample_data(T2D)$sample_body_site)
 ```
 
 The demographics of the samples are shown below.
 
 ```{r}
-table(sample_data(T2D16S)$subject_gender)
+table(sample_data(T2D)$subject_gender)
 
-table(sample_data(T2D16S)$subject_race)
+table(sample_data(T2D)$subject_race)
 ```
 
 
@@ -120,31 +120,31 @@ environments and wish to provide methods to export the data from
 For `SummarizedExperiment` objects, we will need to separate the data and metadata first before exportation. First, make a `data.frame` for participant data.
 
 ```{r}
-momspi_participants <- colData(momspiCytokines)
+momspi_participants <- colData(momspiCyto)
 ```
 
 Then we need to pull out the data matrix.
 
 ```{r}
-momspi_cytokines <- assay(momspiCytokines)
+momspi_cytokines <- assay(momspiCyto)
 ```
 
 For `phyloseq` objects the data, metadata, and taxonomy can be separated as follows. First, pull out metadata.
 
 ```{r}
-momspi16S_participants <- sample_data(momspi16S)
+momspi16S_participants <- sample_data(momspi)
 ```
 
 Next, we can save the counts data as a matrix.
 
 ```{r}
-momspi16s_data <- as.matrix(otu_table(momspi16S))
+momspi16s_data <- as.matrix(otu_table(momspi))
 ```
 
 Finally, the taxonomy table can be extracted.
 
 ```{r}
-momspi16s_taxa <- tax_table(momspi16S) %>% as.data.frame()
+momspi16s_taxa <- tax_table(momspi) %>% as.data.frame()
 ```
 
 ## Save data as CSV

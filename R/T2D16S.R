@@ -1,9 +1,10 @@
-#' HMP2 16S sequencing data for Type 2 Diabetes (T2D)
+#' Create HMP2 16S sequencing data for Type 2 Diabetes (T2D) phyloseq object
 #'
 #' The HMP2 study gathered data on the microbiome for
 #' patients with different disease. This dataset contains
 #' 16S rRNA data for 79 patients with T2D over multiple visits.
 #'
+#' @export
 #' @format A phyloseq object with 10,815 taxa and 1,319 samples.
 #' \subsection{OTU Table}{
 #'     A counts matrix for the rRNA-seq results.
@@ -25,4 +26,17 @@
 #' \subsection{Taxonomy Table}{
 #'     Taxonomy table for the taxa identified.
 #' }
-"T2D16S"
+#' @return a phyloseq object
+#' @examples T2D <- T2D16S()
+T2D16S <- function() {
+  # load data
+  data('T2D16S_mtx')
+  data('T2D16S_samp')
+  data('T2D16S_tax')
+
+  # create phyloseq object
+  T2D16S <- phyloseq(otu_table(T2D16S_mtx, taxa_are_rows = TRUE),
+                     sample_data(T2D16S_samp),
+                     tax_table(T2D16S_tax))
+  return(T2D16S)
+}
