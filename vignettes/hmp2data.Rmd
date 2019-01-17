@@ -27,21 +27,55 @@ knitr::opts_chunk$set(
 BiocManager::install("HMP2Data")
 ```
 
-Once installed, `HMP2Data` provides functions to access the HMP2 data. When called, as follows, the functions will download data from an `ExperimentHub` Amazon S3 (Simple Storage Service) bucket over `https` or load data from a local cache.
-
-The MOMS-PI 16S data can be loaded as follows.
-
-```{r, message=FALSE}
+```{r}
 library(HMP2Data)
 library(phyloseq)
 library(SummarizedExperiment)
+library(MultiAssayExperiment)
 library(dplyr)
+```
 
+Once installed, `HMP2Data` provides functions to access the HMP2 data. 
+
+## MOMS-PI
+
+The MOMS-PI data can be loaded as follows.
+
+Load 16S data, rows are Greengene IDs, columns are samples:
+
+```{r}
+data("momspi16S_mtx")
+momspi16S_mtx[1:5, 1:5]
+```
+
+Load the Greengenes taxonomy table, rows are Greengene IDs, columns are taxonomic ranks:
+
+```{r}
+data("momspi16S_tax")
+momspi16S_tax[1:5, ]
+# Check if Greengene IDs match between the 16S and taxonomy data
+# all.equal(rownames(momspi16S_mtx), rownames(momspi16S_tax)) # Should be TRUE
+```
+
+Load the sample annotation data, rows are samples, columns are annotations:
+
+```{r}
+data("momspi16S_samp")
+momspi16S_samp[1:5, ]
+# Check if sample names match between the 16S and sample data
+# all.equal(colnames(momspi16S_mtx), rownames(momspi16S_samp)) # Should be TRUE
+```
+
+The `momspi16S` function assembles those matrices into a `phyloseq` object.
+
+```{r, message=FALSE}
 momspi <- momspi16S()
 momspi
 ```
 
-Here we have a `phyloseq` object containing the 16S rRNA seq data for `r nrow(otu_table(momspi))` taxa and `r ncol(otu_table(momspi))` samples. The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
+Here we have a `phyloseq` object containing the 16S rRNA seq data for `r nrow(otu_table(momspi))` taxa and `r ncol(otu_table(momspi))` samples. 
+
+The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
 
 ```{r}
 momspiCyto <- momspiCytokines()
@@ -50,6 +84,16 @@ momspiCyto
 
 The cytokine data contains data for `r nrow(momspiCyto)` cytokines over `r ncol(momspiCyto)` samples.
 
+We can construct a `MultiAssayExperiment` that will contain 16S and cytokine data for the common samples. Use `momspiMultiAssay` function.
+
+```{r}
+momspiMA <- momspiMultiAssay()
+momspiMA
+```
+
+
+## IBD
+
 The IBD data can be loaded as follows.
 
 ```{r}
@@ -57,13 +101,14 @@ IBD <- IBD16S()
 IBD
 ```
 
+## T2D
+
 The the T2D data can be loaded like so.
 
 ```{r}
 T2D <- T2D16S()
 T2D
 ```
-
 
 
 # Features
@@ -120,19 +165,21 @@ environments and wish to provide methods to export the data from
 For `SummarizedExperiment` objects, we will need to separate the data and metadata first before exportation. First, make a `data.frame` for participant data.
 
 ```{r}
-momspi_participants <- colData(momspiCyto)
+momspi_cytokines_participants <- colData(momspiCyto)
+momspi_cytokines_participants[1:5, ]
 ```
 
 Then we need to pull out the data matrix.
 
 ```{r}
 momspi_cytokines <- assay(momspiCyto)
+momspi_cytokines[1:5, 1:5]
 ```
 
 For `phyloseq` objects the data, metadata, and taxonomy can be separated as follows. First, pull out metadata.
 
 ```{r}
-momspi16S_participants <- sample_data(momspi)
+momspi_16S_participants <- sample_data(momspi)
 ```
 
 Next, we can save the counts data as a matrix.
@@ -153,7 +200,7 @@ The data can be saved as `.csv` files as follows.
 
 ```{r, eval = FALSE}
 library(readr)
-write_csv(data.frame(file_id = rownames(momspi_participants), momspi_participants), "momspi_participants.csv")
+write_csv(data.frame(file_id = rownames(momspi_cytokines_participants), momspi_cytokines_participants), "momspi_cytokines_participants.csv")
 write_csv(data.frame(momspi_cytokines), "momspi_cytokines.csv")
 ```
 

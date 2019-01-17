@@ -4,7 +4,7 @@ output: html_document
 
 # To Do
 
-- save data as matrices then have constructor function to create phyloseq/experiment objects
+- Fix help for `momspiMultiAssay` function
 
 - for vignette make table visits by body sites
 
