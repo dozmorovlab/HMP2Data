@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-`HMP2Data` is a Bioconductor ExperimentData package of the Human Microbiome Project 2 (HMP2). It includes 16S rRNA sequencing data and cytokine data from the Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI) study, 16S and cytokine data for Type 2 diabetes (T2D) patients, and 16S and cytokine data for Inflammatory bowel disease (IBD). Processed data is provided as `MultiAssayExerpiment` objects or `SummarizedExperiment` objects. 
+`HMP2Data` is a Bioconductor ExperimentData package of the Human Microbiome Project 2 (HMP2). It includes 16S rRNA sequencing data and cytokine data from the Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI) study, 16S data for Type 2 diabetes (T2D) patients, and 16S data for Inflammatory bowel disease (IBD). Processed data is provided as `MultiAssayExerpiment` objects or `SummarizedExperiment` objects. 
 
 `HMP2Data` can be installed using `BiocManager` as follows.
 
