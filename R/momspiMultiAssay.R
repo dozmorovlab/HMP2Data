@@ -43,15 +43,12 @@ momspiMultiAssay <- function() {
   momspiCyto_mtx_common <- momspiCyto_mtx[, colnames(momspiCyto_mtx) %in% momspi_common_participants$file.y]
   # all.equal(colnames(momspiCyto_mtx_common), momspi_common_participants$file.y[match(colnames(momspiCyto_mtx_common), momspi_common_participants$file.y)]) # Must be TRUE
   # Make sample names as a combination of the 16S and cytokine file names
-  colnames(momspi16S_mtx_common)  <- paste(colnames(momspi16S_mtx_common), colnames(momspiCyto_mtx_common), sep = ".")
-  colnames(momspiCyto_mtx_common) <- paste(colnames(momspi16S_mtx_common), colnames(momspiCyto_mtx_common), sep = ".")
-  rownames(momspi_common_participants) <- paste(colnames(momspi16S_mtx_common), colnames(momspiCyto_mtx_common), sep = ".")
-  momspi_common_participants <- data.frame(common_sample = paste(colnames(momspi16S_mtx_common), colnames(momspiCyto_mtx_common), sep = "."),
-                                           momspi_common_participants)
+  common_names <- paste(colnames(momspi16S_mtx_common), colnames(momspiCyto_mtx_common), sep = ".")
+  colnames(momspi16S_mtx_common)  <- common_names
+  colnames(momspiCyto_mtx_common) <- common_names
+  rownames(momspi_common_participants) <- common_names
   # Combine into multiAssayExperiment
-  momspiMultiAssay <- MultiAssayExperiment(experiments = ExperimentList(rRNA = momspi16S_mtx_common, cytokines = momspiCyto_mtx_common),
-                                         colData = momspi_common_participants)
-  se0 <- SummarizedExperiment(assays=SimpleList(counts=counts),
-                              colData=colData)
-  return(momspiMultiAssay)
+  momspiMA <- MultiAssayExperiment(experiments = ExperimentList(`16S` = momspi16S_mtx_common, cytokines = momspiCyto_mtx_common), colData = momspi_common_participants)
+
+  return(momspiMA)
 }

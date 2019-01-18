@@ -37,18 +37,20 @@ library(dplyr)
 
 Once installed, `HMP2Data` provides functions to access the HMP2 data. 
 
-## MOMS-PI
+# MOMS-PI
 
 The MOMS-PI data can be loaded as follows.
 
-Load 16S data, rows are Greengene IDs, columns are samples:
+## 16S data
+
+Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
 
 ```{r}
 data("momspi16S_mtx")
 momspi16S_mtx[1:5, 1:5]
 ```
 
-Load the Greengenes taxonomy table, rows are Greengene IDs, columns are taxonomic ranks:
+Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
 
 ```{r}
 data("momspi16S_tax")
@@ -57,7 +59,7 @@ momspi16S_tax[1:5, ]
 # all.equal(rownames(momspi16S_mtx), rownames(momspi16S_tax)) # Should be TRUE
 ```
 
-Load the sample annotation data, rows are samples, columns are annotations:
+Load the 16S sample annotation data as a matrix, rows are samples, columns are annotations:
 
 ```{r}
 data("momspi16S_samp")
@@ -69,13 +71,31 @@ momspi16S_samp[1:5, ]
 The `momspi16S` function assembles those matrices into a `phyloseq` object.
 
 ```{r, message=FALSE}
-momspi <- momspi16S()
-momspi
+momspi16S_phyloseq <- momspi16S()
+momspi16S_phyloseq
 ```
 
-Here we have a `phyloseq` object containing the 16S rRNA seq data for `r nrow(otu_table(momspi))` taxa and `r ncol(otu_table(momspi))` samples. 
+Here we have a `phyloseq` object containing the 16S rRNA seq data for `r nrow(otu_table(momspi16S_phyloseq))` taxa and `r ncol(otu_table(momspi16S_phyloseq))` samples. 
 
-The MOMS-PI cytokine data is stored in a `SummarizedExperiment` object and can be loaded as follows.
+## Cytokine data
+
+The MOMS-PI cytokine data can be loaded as a matrix, rownames are cytokine names, colnames are sample names:
+
+```{r}
+data("momspiCyto_mtx")
+momspiCyto_mtx[1:5, 1:5]
+```
+
+Load the cytokine sample annotation data as a matrix, rows are samples, columns are annotations:
+
+```{r}
+data("momspiCyto_samp")
+momspiCyto_samp[1:5, ]
+# Check if sample names match between the 16S and sample data
+# all.equal(colnames(momspiCyto_mtx), rownames(momspiCyto_samp)) # Should be TRUE
+```
+
+The function `momspiCytokines` will make a `SummarizedExperiment` containing cytokine data
 
 ```{r}
 momspiCyto <- momspiCytokines()
@@ -83,6 +103,8 @@ momspiCyto
 ```
 
 The cytokine data contains data for `r nrow(momspiCyto)` cytokines over `r ncol(momspiCyto)` samples.
+
+## MultiAssayExperiment
 
 We can construct a `MultiAssayExperiment` that will contain 16S and cytokine data for the common samples. Use `momspiMultiAssay` function.
 
