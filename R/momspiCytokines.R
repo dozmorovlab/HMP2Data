@@ -35,7 +35,8 @@ momspiCytokines <- function() {
   data('momspiCyto_samp')
 
   # create phyloseq object
-  momspiCytokines <- SummarizedExperiment(momspiCyto_mtx, colData = momspiCyto_samp)
+  momspiCytokines <- SummarizedExperiment(momspiCyto_mtx, colData = momspiCyto_samp,
+                                          rowData = data.frame(cytokine = rownames(momspiCyto_mtx)))
   return(momspiCytokines)
 }
 

@@ -31,24 +31,45 @@ momspiMultiAssay <- function() {
   data("momspi16S_samp")
   data("momspiCyto_mtx")
   data("momspiCyto_samp")
-  # Metadata for the 16S and cytokine data
-  momspi_16S_participants         <- sample_data(momspi)
-  momspi_cytokine_participants    <- colData(momspiCyto)
-  # Common participants should have the same "subject_id", "sample_body_site", "visit_number", "subject_gender", "subject_race", "study_full_name", "project_name"
-  momspi_common_participants <- inner_join(as.data.frame(momspi_16S_participants), as.data.frame(momspi_cytokine_participants),
-                                           by = c("subject_id", "sample_body_site", "visit_number", "subject_gender", "subject_race", "study_full_name", "project_name"))
-  # Subset the 16S and cytokine data to the common participants
-  momspi16S_mtx_common  <- momspi16S_mtx[, colnames(momspi16S_mtx) %in% momspi_common_participants$file.x]
-  # all.equal(colnames(momspi16S_mtx_common), momspi_common_participants$file.x[match(colnames(momspi16S_mtx_common), momspi_common_participants$file.x)]) # Must be TRUE
-  momspiCyto_mtx_common <- momspiCyto_mtx[, colnames(momspiCyto_mtx) %in% momspi_common_participants$file.y]
-  # all.equal(colnames(momspiCyto_mtx_common), momspi_common_participants$file.y[match(colnames(momspiCyto_mtx_common), momspi_common_participants$file.y)]) # Must be TRUE
-  # Make sample names as a combination of the 16S and cytokine file names
-  common_names <- paste(colnames(momspi16S_mtx_common), colnames(momspiCyto_mtx_common), sep = ".")
-  colnames(momspi16S_mtx_common)  <- common_names
-  colnames(momspiCyto_mtx_common) <- common_names
-  rownames(momspi_common_participants) <- common_names
-  # Combine into multiAssayExperiment
-  momspiMA <- MultiAssayExperiment(experiments = ExperimentList(`16S` = momspi16S_mtx_common, cytokines = momspiCyto_mtx_common), colData = momspi_common_participants)
+  # # Metadata for the 16S and cytokine data
+  # momspi_16S_participants         <- sample_data(momspi)
+  # momspi_cytokine_participants    <- colData(momspiCyto)
+  # # Common participants should have the same "subject_id", "sample_body_site", "visit_number", "subject_gender", "subject_race", "study_full_name", "project_name"
+  # momspi_common_participants <- inner_join(as.data.frame(momspi_16S_participants), as.data.frame(momspi_cytokine_participants),
+  #                                          by = c("subject_id", "sample_body_site", "visit_number", "subject_gender", "subject_race", "study_full_name", "project_name"))
+  # # Subset the 16S and cytokine data to the common participants
+  # momspi16S_mtx_common  <- momspi16S_mtx[, colnames(momspi16S_mtx) %in% momspi_common_participants$file.x]
+  # # all.equal(colnames(momspi16S_mtx_common), momspi_common_participants$file.x[match(colnames(momspi16S_mtx_common), momspi_common_participants$file.x)]) # Must be TRUE
+  # momspiCyto_mtx_common <- momspiCyto_mtx[, colnames(momspiCyto_mtx) %in% momspi_common_participants$file.y]
+  # # all.equal(colnames(momspiCyto_mtx_common), momspi_common_participants$file.y[match(colnames(momspiCyto_mtx_common), momspi_common_participants$file.y)]) # Must be TRUE
+  # # Make sample names as a combination of the 16S and cytokine file names
+  # common_names <- paste(colnames(momspi16S_mtx_common), colnames(momspiCyto_mtx_common), sep = ".")
+  # colnames(momspi16S_mtx_common)  <- common_names
+  # colnames(momspiCyto_mtx_common) <- common_names
+  # rownames(momspi_common_participants) <- common_names
+  # # Combine into multiAssayExperiment
+  # momspiMA <- MultiAssayExperiment(experiments = ExperimentList(`16S` = momspi16S_mtx_common, cytokines = momspiCyto_mtx_common), colData = momspi_common_participants)
+
+
+  # make colData
+  # momspi_common_participants <- inner_join(momspi16S_samp, momspiCyto_samp,
+                                          # by = c("subject_id", "sample_body_site", "visit_number",
+                                          #        "subject_gender", "subject_race", "study_full_name",
+                                          #        "project_name"))
+
+  samp <- rbind(momspi16S_samp, momspiCyto_samp)
+  # set up sampleMap
+  # assay column: the name of the assay, and found in the names of ExperimentList list names
+  # primary column: identifiers of patients or biological units, and found in the row names of colData
+  # colname column: identifiers of assay results, and found
+  #     in the column names of ExperimentList elements Helper functions are available for creating a map from a list. See ?listToMap
+  map <- data.frame(assay = c(rep("RNA", ncol(momspi16S_mtx)), rep("cytokines", ncol(momspiCyto_mtx))),
+                              primary = rownames(samp),
+                              colname = samp$file)
+
+  momspiMA <- MultiAssayExperiment(experiments = ExperimentList(RNA = momspi16S_mtx,
+                                                                cytokines = momspiCyto_mtx),
+                                   colData = samp, sampleMap = map)
 
   return(momspiMA)
 }
