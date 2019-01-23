@@ -4,8 +4,6 @@ output: html_document
 
 # To Do
 
-+ `data("momspiCyto_mtx")` - rownames missing. Temporarily using row numbers.
-
 - `momspiMultiAssay` function - implement `sampleMap` mapping instead of inner join and subsetting. https://bioconductor.github.io/BiocWorkshops/workflow-for-multi-omics-analysis-with-multiassayexperiment.html
 
 - Fix help for `momspiMultiAssay` function
