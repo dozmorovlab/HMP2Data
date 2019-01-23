@@ -137,7 +137,7 @@ T2D
 
 ## Frequency Table Generation
 
-The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows.
+The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S_phyloseq)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows.
 
 ```{r}
 table(sample_data(momspi16S_phyloseq)$sample_body_site, sample_data(momspi16S_phyloseq)$visit_number) %>% t()
@@ -201,19 +201,19 @@ momspi_cytokines[1:5, 1:5]
 For `phyloseq` objects the data, metadata, and taxonomy can be separated as follows. First, pull out metadata.
 
 ```{r}
-momspi_16S_participants <- sample_data(momspi)
+momspi_16S_participants <- sample_data(momspi16S_phyloseq)
 ```
 
 Next, we can save the counts data as a matrix.
 
 ```{r}
-momspi16s_data <- as.matrix(otu_table(momspi))
+momspi16s_data <- as.matrix(otu_table(momspi16S_phyloseq))
 ```
 
 Finally, the taxonomy table can be extracted.
 
 ```{r}
-momspi16s_taxa <- tax_table(momspi) %>% as.data.frame()
+momspi16s_taxa <- tax_table(momspi16S_phyloseq) %>% as.data.frame()
 ```
 
 ## Save data as CSV
