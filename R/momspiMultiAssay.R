@@ -4,10 +4,10 @@
 #' and cytokines data.
 #'
 #' @format A MultiAssayExperiment object with a 16S rRNA matrix and Cytokine matrix
-#' \subsection{rRNA}{}
-#'     A counts matrix for the rRNA-seq results.
+#' \subsection{RNA}{
+#'     A counts matrix for the 16S rRNA-seq results.
 #' }
-#' \subsection{cytokines} {
+#' \subsection{cytokines}{
 #'     A counts matrix for the cytokines results.
 #' }
 #' \subsection{colData}{
@@ -64,8 +64,9 @@ momspiMultiAssay <- function() {
   # colname column: identifiers of assay results, and found
   #     in the column names of ExperimentList elements Helper functions are available for creating a map from a list. See ?listToMap
   map <- data.frame(assay = c(rep("RNA", ncol(momspi16S_mtx)), rep("cytokines", ncol(momspiCyto_mtx))),
-                              primary = rownames(samp),
-                              colname = samp$file)
+                              primary = as.character(rownames(samp)),
+                              colname = as.character(samp$file),
+                    stringsAsFactors = FALSE)
 
   momspiMA <- MultiAssayExperiment(experiments = ExperimentList(RNA = momspi16S_mtx,
                                                                 cytokines = momspiCyto_mtx),

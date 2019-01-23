@@ -140,14 +140,14 @@ T2D
 The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows.
 
 ```{r}
-table(sample_data(momspi)$sample_body_site)
+table(sample_data(momspi16S_phyloseq)$sample_body_site, sample_data(momspi16S_phyloseq)$visit_number) %>% t()
 ```
 
 
 The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiCyto)$sample_body_site))` body sites.
 
 ```{r}
-table(colData(momspiCyto)$sample_body_site)
+table(colData(momspiCyto)$sample_body_site, colData(momspiCyto)$visit_number) %>% t()
 ```
 
 The IBD data contains samples from feces from males and females and multiple races.
@@ -161,7 +161,7 @@ table(sample_data(IBD)$subject_race)
 The T2D data contains samples from the feces and nasal cavity.
 
 ```{r}
-table(sample_data(T2D)$sample_body_site)
+table(sample_data(T2D)$sample_body_site, sample_data(T2D)$visit_number) %>% t()
 ```
 
 The demographics of the samples are shown below.

@@ -3,9 +3,32 @@
 \name{momspiMultiAssay}
 \alias{momspiMultiAssay}
 \title{Make MOMS-PI MultiAssayExperiment}
+\format{A MultiAssayExperiment object with a 16S rRNA matrix and Cytokine matrix
+\subsection{RNA}{
+    A counts matrix for the 16S rRNA-seq results.
+}
+\subsection{cytokines}{
+    A counts matrix for the cytokines results.
+}
+\subsection{colData}{
+   \describe{
+      \item{sample_id}{Sample identifier}
+      \item{subject_id}{Participant identifier}
+      \item{sample_body_site}{Body site of the sample}
+      \item{visit_number}{Visit number}
+      \item{subject_gender}{Participant gender}
+      \item{subject_race}{Participant race}
+      \item{study_full_name}{Name of the study}
+      \item{file}{Filename which the sample was taken from}
+   }
+}}
 \usage{
 momspiMultiAssay()
 }
 \description{
-Make MOMS-PI MultiAssayExperiment
+Construct MultiAssayExperiment for MOMS-PI 16S rRNA
+and cytokines data.
+}
+\examples{
+momspiMA <- momspiMultiAssay()
 }
