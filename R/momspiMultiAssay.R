@@ -53,10 +53,10 @@ momspiMultiAssay <- function() {
 
   # make colData
   # add new ID
-  momspi16S_samp$id <- paste0('a', 1:nrow(momspi16S_samp))
+  momspi16S_samp$id  <- paste0('a', 1:nrow(momspi16S_samp))
   momspiCyto_samp$id <- paste0('b', 1:nrow(momspiCyto_samp))
   # merge
-  common_participants <- inner_join(momspi16S_samp, momspiCyto_samp,
+  common_participants <- dplyr::inner_join(momspi16S_samp, momspiCyto_samp,
                                           by = c("subject_id", "sample_body_site", "visit_number",
                                                  "subject_gender", "subject_race", "study_full_name",
                                                  "project_name"))
@@ -64,19 +64,19 @@ momspiMultiAssay <- function() {
   uncommon <- rbind(momspi16S_samp[! momspi16S_samp$id %in% common_participants$id.x, ],
                     momspiCyto_samp[! momspiCyto_samp$id %in% common_participants$id.y, ])
   # merge common IDs
-  common_participants$id <- paste0(common_participants$id.x, common_participants$id.y)
+  common_participants$id   <- paste0(common_participants$id.x, common_participants$id.y)
   # merge file names
   common_participants$file <- paste(common_participants$file.x, common_participants$file.y, sep = '.')
   # merge sample ids
   common_participants$sample_id <- paste(common_participants$sample_id.x, common_participants$sample_id.y, sep = '.')
-  # make sample data.frame
-  samp <- rbind(common_participants[, c('sample_id', 'subject_id', 'sample_body_site', 'visit_number', 'subject_gender', 'subject_race', 'study_full_name',
-                                        'project_name', 'file', 'id')],
+  # make sample data.frame, using the same columns line "uncommon" object
+  samp <- rbind(common_participants[, colnames(uncommon)],
                 uncommon)
 
 
   rownames(samp) <- samp$file
-  samp <- samp[, -9]
+  # Drop "file" column
+  samp <- dplyr::select(samp, select = -c(file))
   ids <- rownames(samp)
   # set up sampleMap
   # assay column: the name of the assay, and found in the names of ExperimentList list names
@@ -84,25 +84,26 @@ momspiMultiAssay <- function() {
   # colname column: identifiers of assay results, and found
   #     in the column names of ExperimentList elements Helper functions are available for creating a map from a list. See ?listToMap
   # make assay vector
-  assay_common <- grepl("\\.", ids)
-  assay_rna <- grepl("a", samp$id)
+  assay_common <- grepl("\\.", ids)   # Dot-separated IDs
+  assay_rna    <- grepl("a", samp$id) # IDs that start with "a"
   # make map for the samples not in common between 16S and cytokines
-  map_uncommon <- data.frame(assay = ifelse(assay_rna, "RNA", "cytokines")[!assay_common],
+  map_uncommon <- data.frame(assay   = ifelse(assay_rna, "RNA", "cytokines")[!assay_common],
                              primary = rownames(samp)[!assay_common],
-                             colname = rownames(samp)[!assay_common])
+                             colname = rownames(samp)[!assay_common],
+                             stringsAsFactors = FALSE)
   # make map for the samples in common between 16S and cytokines
-  map_common <- data.frame(assay = c(rep("RNA", sum(assay_common)), rep("cytokines", sum(assay_common))),
-                              primary = c(rownames(samp)[assay_common], rownames(samp)[assay_common]),
-                              colname = c(gsub("\\..*$", "", rownames(samp)[assay_common]), gsub("^.*\\.", "", rownames(samp)[assay_common])),
-                    stringsAsFactors = FALSE)
+  map_common <- data.frame(assay   = c(rep("RNA", sum(assay_common)), rep("cytokines", sum(assay_common))),
+                           primary = c(rownames(samp)[assay_common], rownames(samp)[assay_common]),
+                           colname = c(gsub("\\..*$", "", rownames(samp)[assay_common]), gsub("^.*\\.", "", rownames(samp)[assay_common])),
+                           stringsAsFactors = FALSE)
   map <- rbind(map_common, map_uncommon)
 
-  # drop id column for sample data
-  samp <- samp[, -9]
+  # drop "id" column for sample data
+  samp <- dplyr::select(samp, select = -c(id))
   # make multiassay object
-  momspiMA <- MultiAssayExperiment(experiments = ExperimentList(RNA = momspi16S_mtx,
-                                                                cytokines = momspiCyto_mtx),
-                                   colData = samp, sampleMap = map)
+  momspiMA <- MultiAssayExperiment(experiments = ExperimentList(RNA = momspi16S_mtx, cytokines = momspiCyto_mtx),
+                                   colData     = samp,
+                                   sampleMap   = map)
 
   return(momspiMA)
 }
