@@ -27,6 +27,7 @@
 #'
 #'
 #' @importClassesFrom SummarizedExperiment SummarizedExperiment
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @return A SummarizedExperiment object
 #' @examples momspiCyto <- momspiCytokines()
 momspiCytokines <- function() {

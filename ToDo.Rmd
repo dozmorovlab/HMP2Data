@@ -4,14 +4,7 @@ output: html_document
 
 # To Do
 
-- `momspiMultiAssay` function - implement `sampleMap` mapping instead of inner join and subsetting. https://bioconductor.github.io/BiocWorkshops/workflow-for-multi-omics-analysis-with-multiassayexperiment.html
-    - Check for bugs. I don't understand the dimensions of the `samp` object, `rownames(samp)` don't correspond to `colnames(momspi16S_mtx)`, `colnames(momspiCyto_mtx)`. Neither the `map` object is correct.
 
+- for vignette make table by body sites and other parameters
 
-- Fix help for `momspiMultiAssay` function
-
-- for vignette make table visits by body sites
-
-- make function to make multiAssayExperiment for moms pi data
-
-- request for experiment hub
++ describe multiAssayExperiment usage in vignette - extract 16S and annotations, extract cytokines and annotations, extract merged 

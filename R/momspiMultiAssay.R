@@ -4,7 +4,7 @@
 #' and cytokines data.
 #'
 #' @format A MultiAssayExperiment object with a 16S rRNA matrix and Cytokine matrix
-#' \subsection{RNA}{
+#' \subsection{16S}{
 #'     A counts matrix for the 16S rRNA-seq results.
 #' }
 #' \subsection{cytokines}{
@@ -87,12 +87,12 @@ momspiMultiAssay <- function() {
   assay_common <- grepl("\\.", ids)   # Dot-separated IDs
   assay_rna    <- grepl("a", samp$id) # IDs that start with "a"
   # make map for the samples not in common between 16S and cytokines
-  map_uncommon <- data.frame(assay   = ifelse(assay_rna, "RNA", "cytokines")[!assay_common],
+  map_uncommon <- data.frame(assay   = ifelse(assay_rna, "16S", "cytokines")[!assay_common],
                              primary = rownames(samp)[!assay_common],
                              colname = rownames(samp)[!assay_common],
                              stringsAsFactors = FALSE)
   # make map for the samples in common between 16S and cytokines
-  map_common <- data.frame(assay   = c(rep("RNA", sum(assay_common)), rep("cytokines", sum(assay_common))),
+  map_common <- data.frame(assay   = c(rep("16S", sum(assay_common)), rep("cytokines", sum(assay_common))),
                            primary = c(rownames(samp)[assay_common], rownames(samp)[assay_common]),
                            colname = c(gsub("\\..*$", "", rownames(samp)[assay_common]), gsub("^.*\\.", "", rownames(samp)[assay_common])),
                            stringsAsFactors = FALSE)
@@ -101,7 +101,7 @@ momspiMultiAssay <- function() {
   # drop "id" column for sample data
   samp <- dplyr::select(samp, select = -c(id))
   # make multiassay object
-  momspiMA <- MultiAssayExperiment(experiments = ExperimentList(RNA = momspi16S_mtx, cytokines = momspiCyto_mtx),
+  momspiMA <- MultiAssayExperiment(experiments = ExperimentList(`16S` = momspi16S_mtx, cytokines = momspiCyto_mtx),
                                    colData     = samp,
                                    sampleMap   = map)
 

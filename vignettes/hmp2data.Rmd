@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 BiocManager::install("HMP2Data")
 ```
 
-```{r}
+```{r, message=FALSE}
 library(HMP2Data)
 library(phyloseq)
 library(SummarizedExperiment)
@@ -106,12 +106,42 @@ The cytokine data contains data for `r nrow(momspiCyto)` cytokines over `r ncol(
 
 ## MultiAssayExperiment
 
-We can construct a `MultiAssayExperiment` that will contain 16S and cytokine data for the common samples. Use `momspiMultiAssay` function.
+We can construct a `MultiAssayExperiment` that will contain 16S and cytokine data for the common samples. Use the `momspiMultiAssay` function.
 
 ```{r}
 momspiMA <- momspiMultiAssay()
 momspiMA
 ```
+
+### Subsetting the MultiAssayExperiment object
+
+The 16S rRNA data can be extracted from the MultiAssayExperiment object as follows.
+
+```{r}
+rRNA <- momspiMA[[1L]]
+```
+
+Or the cytokines data like so.
+
+```{r}
+cyto <- momspiMA[[2L]]
+```
+
+The sample data can be accessed with the `colData` command.
+
+```{r}
+colData(momspiMA)
+```
+
+
+To extract only the samples with both 16S and cytokine data we can use the `intersectColumns` function.
+
+```{r}
+completeMA <- intersectColumns(momspiMA)
+completeMA
+```
+
+
 
 
 ## IBD
@@ -125,7 +155,7 @@ IBD
 
 ## T2D
 
-The the T2D data can be loaded like so.
+The T2D data can be loaded like so.
 
 ```{r}
 T2D <- T2D16S()
@@ -137,39 +167,35 @@ T2D
 
 ## Frequency Table Generation
 
-The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S_phyloseq)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows.
+The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S_phyloseq)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows. The subjects were all female and the race was unkown for every participant.
 
 ```{r}
-table(sample_data(momspi16S_phyloseq)$sample_body_site, sample_data(momspi16S_phyloseq)$visit_number) %>% t()
+table(sample_data(momspi16S_phyloseq)$sample_body_site, sample_data(momspi16S_phyloseq)$subject_gender) 
 ```
 
 
 The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiCyto)$sample_body_site))` body sites.
 
 ```{r}
-table(colData(momspiCyto)$sample_body_site, colData(momspiCyto)$visit_number) %>% t()
+table(colData(momspiCyto)$sample_body_site, colData(momspiCyto)$subject_gender)
 ```
 
 The IBD data contains samples from feces from males and females and multiple races.
 
 ```{r}
-table(sample_data(IBD)$subject_gender)
-
-table(sample_data(IBD)$subject_race)
+table(sample_data(IBD)$subject_gender, sample_data(IBD)$subject_race)
 ```
 
 The T2D data contains samples from the feces and nasal cavity.
 
 ```{r}
-table(sample_data(T2D)$sample_body_site, sample_data(T2D)$visit_number) %>% t()
+table(sample_data(T2D)$sample_body_site) 
 ```
 
 The demographics of the samples are shown below.
 
 ```{r}
-table(sample_data(T2D)$subject_gender)
-
-table(sample_data(T2D)$subject_race)
+table(sample_data(T2D)$subject_gender, sample_data(T2D)$subject_race)
 ```
 
 
