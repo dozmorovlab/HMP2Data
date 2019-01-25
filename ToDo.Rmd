@@ -5,6 +5,10 @@ output: html_document
 # To Do
 
 
-- for vignette make table by body sites and other parameters
+- Make frequency table similar to `table_one` in https://bioconductor.org/packages/release/data/experiment/vignettes/HMP16SData/inst/doc/HMP16SData.html
+    - Columns - MOMSPI, IBD, T2D studies, number and %.
+    - Rows - all parameters by visit. 
+    - Make a separate table for visits only for those three studies, with 67 visits breakdown.
 
-+ describe multiAssayExperiment usage in vignette - extract 16S and annotations, extract cytokines and annotations, extract merged 
+- Add matrices for IBD and T2D studies
+    - describe their use in the vignette
