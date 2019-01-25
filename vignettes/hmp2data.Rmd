@@ -187,6 +187,29 @@ completeMA
 
 # IBD
 
+Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
+
+```{r}
+data("IBD16S_mtx")
+IBD16S_mtx[1:5, 1:5]
+```
+
+Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
+
+```{r}
+data("IBD16S_tax")
+colnames(IBD16S_tax)
+IBD16S_tax[1:5, 1:5]
+```
+
+Load the 16S sample annotation data as a matrix, rows are samples, columns are annotations:
+
+```{r}
+data("IBD16S_samp")
+colnames(IBD16S_samp)
+IBD16S_samp[1:5, 1:5]
+```
+
 The IBD `phyloseq` object can be loaded as follows.
 
 ```{r}
@@ -195,6 +218,29 @@ IBD
 ```
 
 # T2D
+
+Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
+
+```{r}
+data("T2D16S_mtx")
+T2D16S_mtx[1:5, 1:5]
+```
+
+Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
+
+```{r}
+data("T2D16S_tax")
+colnames(T2D16S_tax)
+T2D16S_tax[1:5, 1:5]
+```
+
+Load the 16S sample annotation data as a matrix, rows are samples, columns are annotations:
+
+```{r}
+data("T2D16S_samp")
+colnames(T2D16S_samp)
+T2D16S_samp[1:5, 1:5]
+```
 
 The T2D `phyloseq` object can be loaded like so.
 
@@ -208,36 +254,51 @@ T2D
 
 ## Frequency Table Generation
 
-The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S_phyloseq)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows. The subjects were all female and the race was unkown for every participant.
+The demographic data contianed in `HMP2Data` can be summarized using the `table_two` function. First we need to make a list of the phyloseq and summarized experiment object which can then be entered into the table generating function.
+
 
 ```{r}
-table(sample_data(momspi16S_phyloseq)$sample_body_site, sample_data(momspi16S_phyloseq)$subject_gender) 
+list(momspi16S = momspi16S_phyloseq, momspiCytokines = momspiCyto, IBD16S = IBD, T2D16S = T2D) %>% table_two()
 ```
 
 
-The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiCyto)$sample_body_site))` body sites.
+We can also create a table of the break down of samples by visit number quantile.
 
 ```{r}
-table(colData(momspiCyto)$sample_body_site, colData(momspiCyto)$subject_gender)
+list(momspi16S = momspi16S_phyloseq, momspiCytokines = momspiCyto, IBD16S = IBD, T2D16S = T2D) %>% visit_table()
 ```
 
-The IBD data contains samples from feces from males and females and multiple races.
 
-```{r}
-table(sample_data(IBD)$subject_gender, sample_data(IBD)$subject_race)
-```
+<!-- The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S_phyloseq)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows. The subjects were all female and the race was unkown for every participant. -->
 
-The T2D data contains samples from the feces and nasal cavity.
+<!-- ```{r} -->
+<!-- table(sample_data(momspi16S_phyloseq)$sample_body_site, sample_data(momspi16S_phyloseq)$subject_gender)  -->
+<!-- ``` -->
 
-```{r}
-table(sample_data(T2D)$sample_body_site) 
-```
 
-The demographics of the samples are shown below.
+<!-- The MOMS-PI cytokine data contains samples from `r length(unique(colData(momspiCyto)$sample_body_site))` body sites. -->
 
-```{r}
-table(sample_data(T2D)$subject_gender, sample_data(T2D)$subject_race)
-```
+<!-- ```{r} -->
+<!-- table(colData(momspiCyto)$sample_body_site, colData(momspiCyto)$subject_gender) -->
+<!-- ``` -->
+
+<!-- The IBD data contains samples from feces from males and females and multiple races. -->
+
+<!-- ```{r} -->
+<!-- table(sample_data(IBD)$subject_gender, sample_data(IBD)$subject_race) -->
+<!-- ``` -->
+
+<!-- The T2D data contains samples from the feces and nasal cavity. -->
+
+<!-- ```{r} -->
+<!-- table(sample_data(T2D)$sample_body_site)  -->
+<!-- ``` -->
+
+<!-- The demographics of the samples are shown below. -->
+
+<!-- ```{r} -->
+<!-- table(sample_data(T2D)$subject_gender, sample_data(T2D)$subject_race) -->
+<!-- ``` -->
 
 
 

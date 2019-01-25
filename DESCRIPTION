@@ -23,7 +23,8 @@ Imports:
     S4Vectors,
     SummarizedExperiment,
     phyloseq,
-    MultiAssayExperiment
+    MultiAssayExperiment,
+    data.table
 Suggests:
     Biobase,
     BiocCheck,
