@@ -1,12 +1,45 @@
 ---
 title: "HMP2Data"
-author: "John Stansfield & Mikhail Dozmorov"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+author:
+- name: John Stansfield
+  affiliation:
+  - &1 Virginia Commonwealth University, Richmond, VA
+- name: Shujian Zhang
+  affiliation:
+  - &2 The Johns Hopkins University, Baltimore, MD
+- name: Ni Zhao
+  affiliation:
+  - *2
+- name: Levi Waldron
+  affiliation:
+  - &3 Graduate School of Public Health and Health Policy, City University of New York, New York, NY
+  - &4 Institute for Implementation Science in Population Health, City University of New York, New York, NY
+- name: Ekaterina Smirnova
+  affiliation:
+  - *1
+- name: Mikhail Dozmorov
+  affiliation:
+  - *1
+date: '`r format(Sys.Date(), "%B %e, %Y")`'
+abstract: >
+    HMP2Data is a Bioconductor package providing the data of the integrative 
+    Human Microbiome Project (iHMP), also known as the second phase of HMP 
+    project (HMP2). It contains 16S rRNA sequencing data from three longitudinal 
+    studies, 1) MOMS-PI, pregnancy and preterm birth; 2) IBD, gut disease onset, 
+    inflammatory bowel disease; and 3) T2D, onset of type 2 diabetes and 
+    respiratory viral infection. Where available, other data is also provided,
+    such as cytokine measures. Raw data files were downloaded from the HMP Data
+    Analysis and Coordination Center. Processed data is provided as matrices,
+    SummarizedExperiment, MultiAssayExperiment, and phyloseq class objects.
+package: HMP2Data
+output:
+    BiocStyle::html_document
 vignette: >
-  %\VignetteIndexEntry{HMP2Data}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{HMP2Data}
+    %\VignetteEncoding{UTF-8}
+    %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+    chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
@@ -17,9 +50,7 @@ knitr::opts_chunk$set(
 ```
 
 
-# Introduction
-
-`HMP2Data` is a Bioconductor ExperimentData package of the Human Microbiome Project 2 (HMP2). It includes 16S rRNA sequencing data and cytokine data from the Multi-Omic Microbiome Study-Pregnancy Initiative (MOMS-PI) study, 16S data for Type 2 diabetes (T2D) patients, and 16S data for Inflammatory bowel disease (IBD). Processed data is provided as `MultiAssayExerpiment` objects or `SummarizedExperiment` objects. 
+# Prerequisites
 
 `HMP2Data` can be installed using `BiocManager` as follows.
 
@@ -27,7 +58,10 @@ knitr::opts_chunk$set(
 BiocManager::install("HMP2Data")
 ```
 
-```{r, message=FALSE}
+The following packages will be used in this vignette to provide demonstrative
+examples of what a user might do with `r BiocStyle::Biocpkg("HMP2Data")`.
+
+```{r, message=FALSE, warning=FALSE}
 library(HMP2Data)
 library(phyloseq)
 library(SummarizedExperiment)
@@ -54,7 +88,11 @@ Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns 
 
 ```{r}
 data("momspi16S_tax")
-momspi16S_tax[1:5, ]
+colnames(momspi16S_tax)
+momspi16S_tax[1:5, 1:5]
+```
+
+```{r eval=FALSE, echo=FALSE}
 # Check if Greengene IDs match between the 16S and taxonomy data
 # all.equal(rownames(momspi16S_mtx), rownames(momspi16S_tax)) # Should be TRUE
 ```
@@ -63,7 +101,8 @@ Load the 16S sample annotation data as a matrix, rows are samples, columns are a
 
 ```{r}
 data("momspi16S_samp")
-momspi16S_samp[1:5, ]
+colnames(momspi16S_samp)
+momspi16S_samp[1:5, 1:5]
 # Check if sample names match between the 16S and sample data
 # all.equal(colnames(momspi16S_mtx), rownames(momspi16S_samp)) # Should be TRUE
 ```
@@ -86,11 +125,17 @@ data("momspiCyto_mtx")
 momspiCyto_mtx[1:5, 1:5]
 ```
 
+The cytokine data has `r nrow(momspiCyto_mtx)` rows and `r ncol(momspiCyto_mtx)` columns.
+
 Load the cytokine sample annotation data as a matrix, rows are samples, columns are annotations:
 
 ```{r}
 data("momspiCyto_samp")
-momspiCyto_samp[1:5, ]
+colnames(momspiCyto_samp)
+momspiCyto_samp[1:5, 1:5]
+```
+
+```{r eval=FALSE, echo=FALSE}
 # Check if sample names match between the 16S and sample data
 # all.equal(colnames(momspiCyto_mtx), rownames(momspiCyto_samp)) # Should be TRUE
 ```
@@ -130,9 +175,8 @@ cyto <- momspiMA[[2L]]
 The sample data can be accessed with the `colData` command.
 
 ```{r}
-colData(momspiMA)
+colData(momspiMA) %>% head()
 ```
-
 
 To extract only the samples with both 16S and cytokine data we can use the `intersectColumns` function.
 
@@ -141,21 +185,18 @@ completeMA <- intersectColumns(momspiMA)
 completeMA
 ```
 
+# IBD
 
-
-
-## IBD
-
-The IBD data can be loaded as follows.
+The IBD `phyloseq` object can be loaded as follows.
 
 ```{r}
 IBD <- IBD16S()
 IBD
 ```
 
-## T2D
+# T2D
 
-The T2D data can be loaded like so.
+The T2D `phyloseq` object can be loaded like so.
 
 ```{r}
 T2D <- T2D16S()
@@ -252,10 +293,10 @@ write_csv(data.frame(file_id = rownames(momspi_cytokines_participants), momspi_c
 write_csv(data.frame(momspi_cytokines), "momspi_cytokines.csv")
 ```
 
-
 # Session Info
 
-```{r}
-sessionInfo()
+```{r message=FALSE}
+if (!(require(xfun))) install.packages(xfun)
+xfun::session_info()
 ```
 
