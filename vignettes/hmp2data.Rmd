@@ -81,7 +81,7 @@ Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
 
 ```{r}
 data("momspi16S_mtx")
-momspi16S_mtx[1:5, 1:5]
+momspi16S_mtx[1:5, 1:3]
 ```
 
 Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
@@ -89,10 +89,10 @@ Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns 
 ```{r}
 data("momspi16S_tax")
 colnames(momspi16S_tax)
-momspi16S_tax[1:5, 1:5]
+momspi16S_tax[1:5, 1:3]
 ```
 
-```{r eval=FALSE, echo=FALSE}
+```{r eval=FALSE, echo=FALSE, include=FALSE}
 # Check if Greengene IDs match between the 16S and taxonomy data
 # all.equal(rownames(momspi16S_mtx), rownames(momspi16S_tax)) # Should be TRUE
 ```
@@ -103,6 +103,9 @@ Load the 16S sample annotation data as a matrix, rows are samples, columns are a
 data("momspi16S_samp")
 colnames(momspi16S_samp)
 momspi16S_samp[1:5, 1:5]
+```
+
+```{r eval=FALSE, echo=FALSE, include=FALSE}
 # Check if sample names match between the 16S and sample data
 # all.equal(colnames(momspi16S_mtx), rownames(momspi16S_samp)) # Should be TRUE
 ```
@@ -122,7 +125,7 @@ The MOMS-PI cytokine data can be loaded as a matrix, rownames are cytokine names
 
 ```{r}
 data("momspiCyto_mtx")
-momspiCyto_mtx[1:5, 1:5]
+momspiCyto_mtx[1:5, 1:3]
 ```
 
 The cytokine data has `r nrow(momspiCyto_mtx)` rows and `r ncol(momspiCyto_mtx)` columns.
@@ -135,7 +138,7 @@ colnames(momspiCyto_samp)
 momspiCyto_samp[1:5, 1:5]
 ```
 
-```{r eval=FALSE, echo=FALSE}
+```{r eval=FALSE, echo=FALSE, include=FALSE}
 # Check if sample names match between the 16S and sample data
 # all.equal(colnames(momspiCyto_mtx), rownames(momspiCyto_samp)) # Should be TRUE
 ```
@@ -166,7 +169,7 @@ The 16S rRNA data can be extracted from the MultiAssayExperiment object as follo
 rRNA <- momspiMA[[1L]]
 ```
 
-Or the cytokines data like so.
+Or, the cytokines data like so.
 
 ```{r}
 cyto <- momspiMA[[2L]]
@@ -191,7 +194,7 @@ Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
 
 ```{r}
 data("IBD16S_mtx")
-IBD16S_mtx[1:5, 1:5]
+IBD16S_mtx[1:5, 1:3]
 ```
 
 Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
@@ -199,7 +202,7 @@ Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns 
 ```{r}
 data("IBD16S_tax")
 colnames(IBD16S_tax)
-IBD16S_tax[1:5, 1:5]
+IBD16S_tax[1:5, 1:3]
 ```
 
 Load the 16S sample annotation data as a matrix, rows are samples, columns are annotations:
@@ -223,7 +226,7 @@ Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
 
 ```{r}
 data("T2D16S_mtx")
-T2D16S_mtx[1:5, 1:5]
+T2D16S_mtx[1:5, 1:3]
 ```
 
 Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
@@ -231,7 +234,7 @@ Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns 
 ```{r}
 data("T2D16S_tax")
 colnames(T2D16S_tax)
-T2D16S_tax[1:5, 1:5]
+T2D16S_tax[1:5, 1:3]
 ```
 
 Load the 16S sample annotation data as a matrix, rows are samples, columns are annotations:
@@ -239,7 +242,7 @@ Load the 16S sample annotation data as a matrix, rows are samples, columns are a
 ```{r}
 data("T2D16S_samp")
 colnames(T2D16S_samp)
-T2D16S_samp[1:5, 1:5]
+T2D16S_samp[1:5, 1:3]
 ```
 
 The T2D `phyloseq` object can be loaded like so.
@@ -307,7 +310,7 @@ list(momspi16S = momspi16S_phyloseq, momspiCytokines = momspiCyto, IBD16S = IBD,
 To our knowledge, R and Bioconductor provide the most and best methods for the
 analysis of microbiome data. However, we realize they are not the only analysis
 environments and wish to provide methods to export the data from
-`r BiocStyle::Biocpkg("HMP16SData")` to CSV format. 
+`r BiocStyle::Biocpkg("HMP2Data")` to CSV format. 
 
 
 ## Preparing the data
@@ -316,14 +319,14 @@ For `SummarizedExperiment` objects, we will need to separate the data and metada
 
 ```{r}
 momspi_cytokines_participants <- colData(momspiCyto)
-momspi_cytokines_participants[1:5, ]
+momspi_cytokines_participants[1:5, 1:3]
 ```
 
-Then we need to pull out the data matrix.
+Then, we need to pull out the data matrix.
 
 ```{r}
 momspi_cytokines <- assay(momspiCyto)
-momspi_cytokines[1:5, 1:5]
+momspi_cytokines[1:5, 1:3]
 ```
 
 For `phyloseq` objects the data, metadata, and taxonomy can be separated as follows. First, pull out metadata.
@@ -344,7 +347,7 @@ Finally, the taxonomy table can be extracted.
 momspi16s_taxa <- tax_table(momspi16S_phyloseq) %>% as.data.frame()
 ```
 
-## Save data as CSV
+## Save the data as CSV
 
 The data can be saved as `.csv` files as follows.
 
