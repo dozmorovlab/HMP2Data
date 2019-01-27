@@ -23,10 +23,10 @@ author:
 date: '`r format(Sys.Date(), "%B %e, %Y")`'
 abstract: >
     HMP2Data is a Bioconductor package providing the data of the integrative 
-    Human Microbiome Project (iHMP), also known as the second phase of HMP 
+    Human Microbiome Project (iHMP), also known as the second phase of the HMP 
     project (HMP2). It contains 16S rRNA sequencing data from three longitudinal 
-    studies, 1) MOMS-PI, pregnancy and preterm birth; 2) IBD, gut disease onset, 
-    inflammatory bowel disease; and 3) T2D, onset of type 2 diabetes and 
+    studies, 1) MOMS-PI, pregnancy, and preterm birth; 2) IBD, gut disease onset, 
+    inflammatory bowel disease; and 3) T2D, the onset of type 2 diabetes and 
     respiratory viral infection. Where available, other data is also provided,
     such as cytokine measures. Raw data files were downloaded from the HMP Data
     Analysis and Coordination Center. Processed data is provided as matrices,
@@ -143,7 +143,7 @@ momspiCyto_samp[1:5, 1:5]
 # all.equal(colnames(momspiCyto_mtx), rownames(momspiCyto_samp)) # Should be TRUE
 ```
 
-The function `momspiCytokines` will make a `SummarizedExperiment` containing cytokine data
+The function `momspiCytokines` will make a `SummarizedExperiment` containing cytokine data.
 
 ```{r}
 momspiCyto <- momspiCytokines()
@@ -257,7 +257,7 @@ T2D
 
 ## Frequency Table Generation
 
-The demographic data contianed in `HMP2Data` can be summarized using the `table_two` function. First we need to make a list of the phyloseq and summarized experiment object which can then be entered into the table generating function.
+The demographic data contained in `HMP2Data` can be summarized using the `table_two` function. First, we need to make a list of the phyloseq and summarized experiment object which can then be entered into the table generating function.
 
 
 ```{r}
@@ -272,7 +272,7 @@ list(momspi16S = momspi16S_phyloseq, momspiCytokines = momspiCyto, IBD16S = IBD,
 ```
 
 
-<!-- The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S_phyloseq)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows. The subjects were all female and the race was unkown for every participant. -->
+<!-- The MOMS-PI 16S data contains samples from `r length(unique(sample_data(momspi16S_phyloseq)$sample_body_site))` body sites. The number of samples from each site can be displayed as follows. The subjects were all female, and the race was unknown for every participant. -->
 
 <!-- ```{r} -->
 <!-- table(sample_data(momspi16S_phyloseq)$sample_body_site, sample_data(momspi16S_phyloseq)$subject_gender)  -->
