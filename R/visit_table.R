@@ -28,10 +28,10 @@ visit_table <- function(x) {
   # cbind tables
   if (length(visits) > 1) {
     visits <- do.call(cbind, visits)
-    visits <- cbind("Visit Quantile" = c('first quantile', 'second quantile', 'third quantile'), visits)
+    visits <- cbind("Visit Quantile" = c('First quantile', 'Second quantile', 'Third quantile'), visits)
   } else {
     visits <- visits[[1]]
-    visits <- cbind("Visit Quantile" = c('first quantile', 'second quantile', 'third quantile'), visits)
+    visits <- cbind("Visit Quantile" = c('First quantile', 'Second quantile', 'Third quantile'), visits)
   }
   # set up extra column headers
   column_names <-
