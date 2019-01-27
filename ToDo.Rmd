@@ -4,4 +4,6 @@ output: html_document
 
 # To Do
 
+- Frequency table - add row "Total", showing the total number of subjects in each study, 100% of all subjects
 
+- Frequency table - make study headers prettier, like "MOMS-PI 16S"
