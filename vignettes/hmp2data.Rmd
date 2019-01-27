@@ -253,11 +253,11 @@ T2D
 ```
 
 
-# Features
+# Additional functionality
 
-## Frequency Table Generation
+## Annotation Summary Table
 
-The demographic data contained in `HMP2Data` can be summarized using the `table_two` function. First, we need to make a list of the phyloseq and summarized experiment object which can then be entered into the table generating function.
+The demographic data contained in `HMP2Data` can be summarized using the `table_two()` function. First, we need to make a list of the `phyloseq` and `SummarizedExperiment` object which can then be entered into the table generating function. "N" and "%" are the number and percent of subjects with a given annotation, respectively.
 
 
 ```{r}
@@ -265,7 +265,7 @@ list(momspi16S = momspi16S_phyloseq, momspiCytokines = momspiCyto, IBD16S = IBD,
 ```
 
 
-We can also create a table of the break down of samples by visit number quantile.
+We can also create a table of the break down of samples by visit number quantile. That is, the first quantile will contain visit counts belonging to the first quantile of the whole range of visit numbers. The split of visits by quantiles helps to account for the fact that different studies have different ranges of visits.
 
 ```{r}
 list(momspi16S = momspi16S_phyloseq, momspiCytokines = momspiCyto, IBD16S = IBD, T2D16S = T2D) %>% visit_table()
