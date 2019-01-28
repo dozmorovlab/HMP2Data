@@ -50,10 +50,12 @@ table_two <- function(x) {
   # add in headers for sections
   tables$vars <- as.character(tables$vars)
   tables <- rbind(c("**Body Site**", rep("", ncol(tables) - 1)), tables)
-  tables <- rbind(tables[1:9,], c("**Sex**", rep("", ncol(tables) - 1)), tables[10:19, ])
-  tables <- rbind(tables[1:13,], c("**Race**", rep("", ncol(tables) - 1)), tables[14:20, ])
+  tables <- rbind(tables[1:9,], c("**Sex**", rep("", ncol(tables) - 1)), tables[10:20, ])
+  tables <- rbind(tables[1:13,], c("**Race**", rep("", ncol(tables) - 1)), tables[14:21, ])
   # replace underscores with spaces
   tables$vars <- gsub("_", " ", tables$vars)
+  # total row
+  # totals <- c("total", sum(tables[,2]), "100", sum(tables[,4]), "100", sum(tables[,6]))
 
   # set up extra column headers
   column_names <-
@@ -113,5 +115,9 @@ extract_info <- function(x) {
     colnames(x) <- c('N', '%')
     return(x)
   })
+  # add totals
+  tables[[4]] <- matrix(data = c(length(unique(samp$subject_id)), 100), nrow = 1, ncol = 2)
+  rownames(tables[[4]]) <- "**total subjects**"
+  colnames(tables[[4]]) <- c("N", "%")
   return(tables)
 }

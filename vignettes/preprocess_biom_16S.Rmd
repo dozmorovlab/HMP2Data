@@ -1,0 +1,348 @@
+---
+title: "Preprocessing biom files"
+# author: "Author's Name"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    theme: cerulean
+    toc: yes
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Set up the environment
+library(knitr)
+opts_chunk$set(cache.path='cache/', fig.path='img/', cache=F, tidy=T, fig.keep='high', echo=F, dpi=100, warnings=F, message=F, comment=NA, warning=F, results='as.is', fig.width = 10, fig.height = 6) #out.width=700, 
+library(pander)
+panderOptions('table.split.table', Inf)
+set.seed(1)
+library(dplyr)
+options(stringsAsFactors = FALSE)
+```
+
+```{r}
+library(readr)
+library(magrittr)
+library(biomformat)
+library(ggplot2)
+library(DataExplorer)
+library(reshape2)
+library(openxlsx)
+library(MDmisc)
+```
+
+# Settings
+
+You will need to set the correct paths here for your data.
+
+```{r settings}
+# Data folder
+dataDir <- "path/to/data/dir"
+# Input files
+# User will need to change paths accordingly to their directory structure
+fileNameIn1  <- "data/hmp_cart_41c0aca569.tsv" # Manifest
+fileNameIn2  <- "data/hmp_cart_metadata_26015b0c41.tsv" # Metadata
+fileNameIn3  <- "data/downloaded_ascp.txt" # Downloaded files
+# Output files
+fileNameOut1 <- "data/mtx_biom_ID_all.csv" # All IDs from .biom files
+fileNameOut2 <- "mtx_biom_data_all_ID-Tax_merged.xlsx" # All data from .biom files, merged by ID and Taxonomy
+fileNameOut3 <- "mtx_biom_data_all_ID_merged.xlsx"     # All data from .biom files, merged by ID
+fileNameOut4 <- "data/hmp_cart_metadata_26015b0c41_extended.tsv" # Metadata with added fields from .biom files
+
+# Misc
+max_files <- 500 # How many files to process
+full_data <- TRUE # If true, `max_files` is ignored and all files are processed
+```
+
+# Load data
+
+Data source: https://www.hmpdacc.org/hmp/, https://portal.hmpdacc.org/ - data portal. [Files to download](https://portal.hmpdacc.org/search/f?filters=%7B%22op%22:%22and%22,%22content%22:%5B%7B%22op%22:%22in%22,%22content%22:%7B%22field%22:%22cases.study_name%22,%22value%22:%5B%22MOMS-PI%22%5D%7D%7D,%7B%22op%22:%22in%22,%22content%22:%7B%22field%22:%22files.file_format%22,%22value%22:%5B%22Biological%20Observation%20Matrix%22%5D%7D%7D,%7B%22op%22:%22in%22,%22content%22:%7B%22field%22:%22files.file_matrix_type%22,%22value%22:%5B%2216s_community%22%5D%7D%7D%5D%7D&facetTab=files&pagination=%7B%22files%22:%7B%22from%22:0,%22size%22:20,%22sort%22:%22file_name.raw:asc%22%7D%7D). Download with `scripts/ascp-commands.sh`
+
+```{r}
+# Manifest
+mtx1 <- read_tsv(fileNameIn1)
+# Add file names
+mtx1 %<>% mutate(file_name = sapply(mtx1$urls, function(x) strsplit(x, split = ",", fixed = TRUE)[[1]][1] %>% basename) %>% unname)
+```
+
+```{r}
+# Metadata
+mtx2 <- read_tsv(fileNameIn2)
+```
+
+```{r}
+# Downloaded files
+mtx3 <- read_tsv(fileNameIn3, col_names = FALSE)
+# Subset manifest to downloaded files only
+mtx1 <- mtx1[ mtx1$file_name %in% mtx3$X1, ]
+```
+
+
+# Read .biom data
+
+```{r}
+# All biom files
+files <- list.files(path = paste0(dataDir, "ptb/"), pattern = "biom", full.names = TRUE)
+# Sanity check: Are they all in the manifest?
+all.equal(files %>% basename %>% sort, mtx1$file_name %>% sort)
+```
+
+## Finding nonreadable .biom
+
+Some files throw an error when being read, e.g.
+
+```
+in read_biom(files[i]) : Both attempts to read input file:
+/Users/mdozmorov/Documents/Data/GitHub/HMP2/ptb//EP988019_K30_MV1D.otu_table.biom
+either as JSON (BIOM-v1) or HDF5 (BIOM-v2).
+Check file path, file name, file itself, then try again.
+```
+
+Manually find their indices in the full matrix, download them separately, remove the nonreadable .biom files from the total list of files.
+
+```{r problemFiles, eval=FALSE}
+### Investigation of problematic files
+
+# Breaks on certain files, e.g, 145, EP016061_K20_MV1D.otu_table.biom
+# Error in read_biom(files[i]) : Both attempts to read input file:
+# /Users/mdozmorov/Documents/Data/GitHub/HMP2/ptb//EP217091_K40_MCHD.otu_table.biom
+# either as JSON (BIOM-v1) or HDF5 (BIOM-v2).
+# Check file path, file name, file itself, then try again.
+
+# Indices of problematic files
+index <- c(145, 159, 208, 308, 819, 1111, 1125, 1189, 1211, 1381, 1529, 1752, 2054, 2175, 2208, 2214, 2275, 2494, 2574, 3003, 3010, 3082, 3411, 3448, 3709, 3989, 3995, 4124, 4234, 4626, 4762, 4950, 5378, 5396, 5399, 5455, 5633, 5755, 5761, 5771, 6099, 6111, 6236, 6240, 6436, 6565, 7454, 7464, 7566, 7750, 7943, 8322, 8349, 8360, 8425, 8433, 8461, 8637, 8692, 8770, 9057, 9087, 9107, 9124)
+# Manifest data to download missed files
+mtx1_missed <- mtx1[mtx1$file_name %in% basename(files)[index], ] # %>% dplyr::select(-file_name)
+# Save temporary manifest, convert to download script
+write_tsv(mtx1_missed, "biom_nonreadable.tsv") 
+# Remove nonreadable files from the folder with all downloaded files
+# for file in `cat /Users/mdozmorov/Documents/Work/GitHub/HMP2/data/biom_nonreadable.tsv | cut -f6`; do mv $file .. ; done
+# Download nonreadable files separately
+# ./hmp_client/bin/manifest2ascp.py --manifest=tmp.tsv --user=mdozmorov --password=FNEMHgvf --ascp_path=/Users/mdozmorov/Applications/Aspera\ CLI/bin/ascp --ascp_options="-l 200M" > ascp-commands_biom_nonreadable.sh
+
+
+# Non-readable files
+
+files_missed <- list.files(path = "/Users/mdozmorov/Documents/Data/GitHub/HMP2/ptb_nonreadable", pattern = "biom", full.names = TRUE, recursive = TRUE)
+files_missed
+# Test reading before/after JSON conversion
+mtx_biom_missed <- read_biom(files_missed[2])
+
+# JSON conversion
+# https://github.com/joey711/phyloseq/issues/443
+# source activate qiime1
+# for file in *.biom; do biom convert -i $file -o test.biom  --table-type="OTU table" --to-json && mv test.biom $file; done
+# source deactivate
+```
+
+- Readable but nonconforming to the majority format files:
+    - EP912225_K60_BCKD.otu_table.biom
+
+
+## Checking each .biom file for readability
+
+After we remove non-readable files, we still check if each of the remaining files can be read. `r length(files)` files should be read without errors (warnings OK).
+
+```{r eval=FALSE}
+# Check all files for readability
+for (i in 1:length(files)) {
+    print(paste0(i, " ", basename(files[i])))
+    # Read the data
+    mtx_biom <- read_biom(files[i]) # Don't do anything, just check if read without errors
+}
+```
+
+
+## Extract full matrix
+
+```{r}
+# Function to manually extract biom data
+manual_biom_extract <- function(file) {
+  mtx_biom <- read_biom(file)
+  # Slot 12 - data
+  # Slot 10 - sample name ($id)
+  # Slot 9  - IDs ($id, $metadata)
+  # Extract necessary slots in a data frame
+  mtx_biom_df <- data.frame(ID       = mtx_biom@.Data[[9]] %>% lapply(., function(x) x$id) %>% unlist,
+                            Taxonomy = mtx_biom@.Data[[9]] %>% lapply(., function(x) x$metadata$taxonomy %>% paste(., collapse = "; ")) %>% unlist,
+                            Sample   = mtx_biom@.Data[[12]] %>% unlist)
+  colnames(mtx_biom_df) <- c("ID", "Taxonomy", basename(file)) # Add file name as a column name
+  return(mtx_biom_df)
+}
+```
+
+```{r}
+# How many files to process
+if (full_data) {
+  total <- length(files) # Total number of files
+} else {
+  total <- max_files # Total number of files
+}
+# Set progress bar
+pb <- txtProgressBar(min = 2, max = total, style = 3)
+
+# List to append biom tables
+mtx_biom_data_all <- list()
+# Starting from the second file
+for (i in 1:total) {
+  # Skip certain files
+  # Add `index` counts from "problemFiles" to skip
+  if (!(i %in% c())) {
+    # setTxtProgressBar(pb, i)
+    print(paste0(i, " ", basename(files[i])))
+    # Read the data
+    mtx_biom <- manual_biom_extract(file = files[i])
+    # Append to the list
+    mtx_biom_data_all <- c(mtx_biom_data_all, list(mtx_biom))
+    # Full join with the main file
+    # mtx_biom_data_all <- full_join(mtx_biom_data_all, mtx_biom, by = c("ID", "Taxonomy"))
+  }
+}
+```
+
+### Merge by both ID and Taxonlomy
+
+```{r eval=FALSE}
+# Combine all elements in a list into a data frame, merging by both IDs. Time consuming, over 5 hours
+mtx_biom_data_all_df <- mtx_biom_data_all %>% purrr::reduce(full_join, by = c("ID", "Taxonomy"))
+dim(mtx_biom_data_all_df) # 13711 x 9109
+# Sort by numerical ID
+mtx_biom_data_all_df <- mtx_biom_data_all_df[order(mtx_biom_data_all_df$ID), ]
+# Save the data in Excel format
+unlink(paste0(dataDir, fileNameOut2)) # Delete previous file
+wb <- openxlsx::createWorkbook(paste0(dataDir, fileNameOut2)) # openxlsx::loadWorkbook(fileName) # Or, load existing
+save_res(mtx_biom_data_all_df, fileName = paste0(dataDir, fileNameOut2), wb = wb, sheetName = "Biom")
+# Save the data in CSV format
+write_csv2(x = mtx_biom_data_all_df, path = paste0(dataDir, sub(pattern = "xlsx", replacement = "csv", fileNameOut2)))
+```
+
+### Investigate duplicates
+
+Many IDs are duplicated because Taxonomy mismatch
+
+```{r eval=FALSE}
+# How many unique IDs
+unique(mtx_biom_data_all_df$ID) %>% length() # 7665
+# Check duplicates
+duplicated_IDs <- mtx_biom_data_all_df[duplicated(mtx_biom_data_all_df$ID), "ID"]
+mtx_biom_data_all_df[mtx_biom_data_all_df$ID %in% duplicated_IDs, c("ID", "Taxonomy")] %>% arrange(ID) %>% head(n = 10)
+```
+
+```
+        ID                                                                                                            Taxonomy
+1  1007399         k__Bacteria; p__Proteobacteria; c__Betaproteobacteria; o__Neisseriales; f__Neisseriaceae; g__Neisseria; s__
+2  1007399 k__Bacteria; p__Proteobacteria; c__Betaproteobacteria; o__Neisseriales; f__Neisseriaceae; g__Neisseria; s__subflava
+3   100791              k__Bacteria; p__Proteobacteria; c__Betaproteobacteria; o__Burkholderiales; f__Comamonadaceae; g__; s__
+4   100791                    k__Bacteria; p__Proteobacteria; c__Betaproteobacteria; o__Burkholderiales; f__Comamonadaceae; ; 
+5   100793                    k__Bacteria; p__Proteobacteria; c__Alphaproteobacteria; o__Rhizobiales; f__Bradyrhizobiaceae; ; 
+6   100793              k__Bacteria; p__Proteobacteria; c__Alphaproteobacteria; o__Rhizobiales; f__Bradyrhizobiaceae; g__; s__
+7  1020410                                  k__Bacteria; p__Firmicutes; c__Bacilli; o__Bacillales; f__Planococcaceae; g__; s__
+8  1020410                                                         k__Bacteria; p__Firmicutes; c__Bacilli; o__Bacillales; ; ; 
+9   102142      k__Bacteria; p__Proteobacteria; c__Alphaproteobacteria; o__Rhizobiales; f__Rhizobiaceae; g__Agrobacterium; s__
+10  102142                         k__Bacteria; p__Proteobacteria; c__Alphaproteobacteria; o__Rhizobiales; f__Rhizobiaceae; ; 
+```
+
+### Merge by ID only
+
+```{r}
+# Combine all elements in a list into a data frame, merging by ID only. Time consuming, over 5 hours
+mtx_biom_data_all_df <- mtx_biom_data_all %>% purrr::reduce(full_join, by = c("ID"))
+# Remove taxonomy columns that double the number of columns
+mtx_biom_data_all_df <- mtx_biom_data_all_df[, !grepl("Taxonomy", colnames(mtx_biom_data_all_df))]
+dim(mtx_biom_data_all_df) # 7665 x 9108
+# Sort by numerical ID
+mtx_biom_data_all_df <- mtx_biom_data_all_df[order(mtx_biom_data_all_df$ID), ]
+# Save the data in Excel format
+unlink(paste0(dataDir, fileNameOut3)) # Delete previous file
+wb <- openxlsx::createWorkbook(paste0(dataDir, fileNameOut3)) # openxlsx::loadWorkbook(fileName) # Or, load existing
+save_res(mtx_biom_data_all_df, fileName = paste0(dataDir, fileNameOut3), wb = wb, sheetName = "Biom")
+# Save the data in CSV format
+write_csv2(x = mtx_biom_data_all_df, path = paste0(dataDir, sub(pattern = "xlsx", replacement = "csv", fileNameOut3)))
+```
+
+### Extract extended metadata from .biom files
+
+```{r}
+sample_name <- list() # Store file name
+# Slots, and examples of data in them
+mtx_slot_1  <- list() # chr "No Table ID"
+mtx_slot_2  <- list() # chr "Biological Observation Matrix 2.1"
+mtx_slot_3  <- list() # chr "http://biom-format.org"
+mtx_slot_4  <- list() # chr "OTU table"
+mtx_slot_5  <- list() # chr "QIIME 1.9.1"
+mtx_slot_6  <- list() # chr "2016-08-31T20:18:41.394155"
+mtx_slot_7  <- list() # chr "dense"
+mtx_slot_8  <- list() # chr "int"
+mtx_slot_11 <- list() # int [1:2] 43 1
+# Extracted in `manual_biom_extract` function
+# Slot 9  - IDs ($id (chr "807795"), $metadata (chr [1:7] "k__Bacteria" "p__Firmicutes"))
+# Slot 10 - sample name ($id (chr "EP003595"), $metadata (list()))
+# Slot 12 - data
+
+# Starting from the second file
+for (i in 1:length(files)) {
+    print(paste0(i, " ", basename(files[i])))
+    sample_name <- c(sample_name, basename(files[i]) %>% sub(pattern = ".otu_table.biom", replacement = ""))
+    # Read the data
+    mtx_biom    <- read_biom(files[i])
+    mtx_slot_1  <- c(mtx_slot_1 , mtx_biom@.Data[[1]] )
+    mtx_slot_2  <- c(mtx_slot_2 , mtx_biom@.Data[[2]] )
+    mtx_slot_3  <- c(mtx_slot_3 , mtx_biom@.Data[[3]] )
+    mtx_slot_4  <- c(mtx_slot_4 , mtx_biom@.Data[[4]] )
+    mtx_slot_5  <- c(mtx_slot_5 , mtx_biom@.Data[[5]] )
+    mtx_slot_6  <- c(mtx_slot_6 , mtx_biom@.Data[[6]] )
+    mtx_slot_7  <- c(mtx_slot_7 , mtx_biom@.Data[[7]] )
+    mtx_slot_8  <- c(mtx_slot_8 , mtx_biom@.Data[[8]] )
+    mtx_slot_11 <- c(mtx_slot_11, paste(mtx_biom@.Data[[11]], collapse = "-"))
+}
+# Construct extended metadata 
+biom_metadata <- data.frame(file   = sample_name %>% purrr::reduce(c),
+                            slot1  = mtx_slot_1  %>% purrr::reduce(c),
+                            slot2  = mtx_slot_2  %>% purrr::reduce(c),
+                            slot3  = mtx_slot_3  %>% purrr::reduce(c),
+                            slot4  = mtx_slot_4  %>% purrr::reduce(c),
+                            slot5  = mtx_slot_5  %>% purrr::reduce(c),
+                            slot6  = mtx_slot_6  %>% purrr::reduce(c),
+                            slot7  = mtx_slot_7  %>% purrr::reduce(c),
+                            slot8  = mtx_slot_8  %>% purrr::reduce(c),
+                            slot11 = mtx_slot_11 %>% purrr::reduce(c))
+# Quick EDA - nothing really interesting
+biom_metadata %>% dplyr::select(-slot6, -slot11) %>% sapply(table)
+# Combine with the original metedata
+mtx_metadata_extended <- left_join(mtx_metadata, biom_metadata, by = c("file"))
+# Save the extended metadata
+write_tsv(mtx_metadata_extended, path = fileNameOut4)
+```
+
+
+
+```{r eval=FALSE}
+### Extract IDs only
+
+# Read the first file to append the following files to
+mtx_biom <- read_biom(files[1])
+mtx_biom_ID_all <- biom_data(mtx_biom) %>% as.data.frame() %>% rownames # IDs are in rownames
+
+# Process all files
+total <- length(files) # Total number of files
+# Set progress bar
+pb <- txtProgressBar(min = 2, max = total, style = 3)
+
+# Starting from the second file
+for (i in 2:total) {
+  # Skip certain files
+  # Add `index` counts from "problemFiles" to skip
+  if (!(i %in% c())) {
+    setTxtProgressBar(pb, i)
+    # print(paste0(i, " ", basename(files[i])))
+    # Read the data
+    mtx_biom <- read_biom(files[i])
+    mtx_biom_data <- biom_data(mtx_biom) %>% as.data.frame() %>% rownames() # IDs are in rownames
+    # Append to mtx_biom_ID_all
+    mtx_biom_ID_all <- c(mtx_biom_ID_all, mtx_biom_data) %>% unique()
+  }
+}
+# 7665 unique IDs
+write_csv(x = data.frame(mtx_biom_ID_all), path = fileNameOut1)
+```

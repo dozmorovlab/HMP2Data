@@ -1,0 +1,180 @@
+---
+title: "Preprocessing cytokine files"
+# author: "Author's Name"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    theme: cerulean
+    toc: yes
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Set up the environment
+library(knitr)
+opts_chunk$set(cache.path='cache/', fig.path='img/', cache=F, tidy=T, fig.keep='high', echo=F, dpi=100, warnings=F, message=F, comment=NA, warning=F, results='as.is', fig.width = 10, fig.height = 6) #out.width=700, 
+library(pander)
+panderOptions('table.split.table', Inf)
+set.seed(1)
+library(dplyr)
+options(stringsAsFactors = FALSE)
+```
+
+```{r}
+library(readr)
+library(magrittr)
+library(biomformat)
+library(ggplot2)
+library(DataExplorer)
+library(reshape2)
+library(openxlsx)
+library(MDmisc)
+```
+
+# Settings
+
+You will need to set the correct paths here for your data.
+
+```{r settings}
+# Data folder
+dataDir <- "/path/to/data/dir"
+# Input files
+# You will need to set these paths according to your data directory strucutre
+fileNameIn1  <- "data/hmp_cart_b10350603.tsv" # Manifest
+fileNameIn2  <- "data/hmp_cart_metadata_1e3cf1e9c1.tsv" # Metadata
+fileNameIn3  <- "data/downloaded_ascp_cytokines.txt" # Downloaded files
+# Output files
+fileNameOut1 <- "data/mtx_cytokine_ID_all.csv" # All IDs from .biom files
+fileNameOut3 <- "mtx_cytokine_data_all_ID_merged.xlsx"     # All data from .biom files, merged by ID
+
+# Misc
+max_files <- 500 # How many files to process
+full_data <- TRUE # If true, `max_files` is ignored and all files are processed
+```
+
+# Load data
+
+Data source: https://www.hmpdacc.org/hmp/, https://portal.hmpdacc.org/ - data portal. [Samples/Studies: MOMS-PI, Files/Matrix Type: "host_cytokine" - selects 872 files](https://portal.hmpdacc.org/search/f?filters=%7B%22op%22:%22and%22,%22content%22:%5B%7B%22op%22:%22in%22,%22content%22:%7B%22field%22:%22cases.study_name%22,%22value%22:%5B%22MOMS-PI%22%5D%7D%7D,%7B%22op%22:%22in%22,%22content%22:%7B%22field%22:%22files.file_matrix_type%22,%22value%22:%5B%22host_cytokine%22%5D%7D%7D%5D%7D&facetTab=files&pagination=%7B%22files%22:%7B%22from%22:0,%22size%22:20,%22sort%22:%22file_name.raw:asc%22%7D%7D). Download with `scripts/ascp-commands_biom_host_cytokine.sh`
+
+```{r}
+# Manifest
+mtx1 <- read_tsv(fileNameIn1)
+# Add file names
+mtx1 %<>% mutate(file_name = sapply(mtx1$urls, function(x) strsplit(x, split = ",", fixed = TRUE)[[1]][1] %>% basename) %>% unname %>% paste0(., ".gz")) # gzipped files
+```
+
+```{r}
+# Metadata
+mtx2 <- read_tsv(fileNameIn2)
+```
+
+```{r}
+# Downloaded files
+mtx3 <- read_tsv(fileNameIn3, col_names = FALSE)
+# Subset manifest to downloaded files only
+mtx1 <- mtx1[ mtx1$file_name %in% mtx3$X1, ]
+```
+
+
+# Read cytokine data
+
+```{r}
+# All cytokine files
+files <- list.files(path = paste0(dataDir, "ptb/cytokines/"), pattern = "txt.gz", full.names = TRUE)
+# Sanity check: Are they all in the manifest?
+all.equal(files %>% basename %>% sort, mtx1$file_name %>% sort)
+```
+
+## Extract full matrix
+
+```{r}
+# Function to manually extract biom data
+manual_biom_extract <- function(file) {
+  mtx <- read_biom(file)
+  # Slot 12 - data
+  # Slot 10 - sample name ($id)
+  # Slot 9  - IDs ($id, $metadata)
+  # Extract necessary slots in a data frame
+  mtx_df <- data.frame(ID       = mtx@.Data[[9]] %>% lapply(., function(x) x$id) %>% unlist,
+                            Taxonomy = mtx@.Data[[9]] %>% lapply(., function(x) x$metadata$taxonomy %>% paste(., collapse = "; ")) %>% unlist,
+                            Sample   = mtx@.Data[[12]] %>% unlist)
+  colnames(mtx_df) <- c("ID", "Taxonomy", basename(file)) # Add file name as a column name
+  return(mtx_df)
+}
+```
+
+```{r}
+# How many files to process
+if (full_data) {
+  total <- length(files) # Total number of files
+} else {
+  total <- max_files # Total number of files
+}
+# Set progress bar
+pb <- txtProgressBar(min = 1, max = total, style = 3)
+
+# List to append biom tables
+mtx_data_all <- list()
+# Starting from the second file
+for (i in 1:total) {
+  # Skip certain files
+  # Add `index` counts from "problemFiles" to skip
+  if (!(i %in% c())) {
+    # setTxtProgressBar(pb, i)
+    print(paste0(i, " ", basename(files[i])))
+    # Read the data
+    mtx <- read_tsv(files[i])
+    # Append to the list
+    mtx_data_all <- c(mtx_data_all, list(mtx))
+    # Full join with the main file
+    # mtx_data_all <- full_join(mtx_data_all, mtx, by = c("ID", "Taxonomy"))
+  }
+}
+```
+
+### Merge by ID only
+
+```{r}
+# Combine all elements in a list into a data frame, merging by ID only. Time consuming, over 5 hours
+mtx_data_all_df <- mtx_data_all %>% purrr::reduce(full_join, by = c("Cytokine"))
+dim(mtx_data_all_df) # 29 x 873
+# Save the data in Excel format
+unlink(paste0(dataDir, fileNameOut3)) # Delete previous file
+wb <- openxlsx::createWorkbook(paste0(dataDir, fileNameOut3)) # openxlsx::loadWorkbook(fileName) # Or, load existing
+save_res(mtx_data_all_df, fileName = paste0(dataDir, fileNameOut3), wb = wb, sheetName = "Cytokine")
+# Save the data in CSV format
+# write_csv2(x = mtx_data_all_df, path = paste0(dataDir, sub(pattern = "xlsx", replacement = "csv", fileNameOut3)))
+```
+
+
+
+```{r eval=FALSE}
+### Extract IDs only
+
+# Read the first file to append the following files to
+mtx <- read_biom(files[1])
+mtx_ID_all <- biom_data(mtx) %>% as.data.frame() %>% rownames # IDs are in rownames
+
+# Process all files
+total <- length(files) # Total number of files
+# Set progress bar
+pb <- txtProgressBar(min = 2, max = total, style = 3)
+
+# Starting from the second file
+for (i in 2:total) {
+  # Skip certain files
+  # Add `index` counts from "problemFiles" to skip
+  if (!(i %in% c())) {
+    setTxtProgressBar(pb, i)
+    # print(paste0(i, " ", basename(files[i])))
+    # Read the data
+    mtx <- read_biom(files[i])
+    mtx_data <- biom_data(mtx) %>% as.data.frame() %>% rownames() # IDs are in rownames
+    # Append to mtx_ID_all
+    mtx_ID_all <- c(mtx_ID_all, mtx_data) %>% unique()
+  }
+}
+# 7665 unique IDs
+write_csv(x = data.frame(mtx_ID_all), path = fileNameOut1)
+```
