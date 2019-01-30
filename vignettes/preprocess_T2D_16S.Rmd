@@ -20,11 +20,11 @@ library(magrittr)
 options(stringsAsFactors = FALSE)
 # Input files
 # Change paths to your data directory
-dataDir <- "data.T2D/t2d/" # path to folder containing data files
+dataDir <- "data.T2D/t2d/" # path to folder containing .biom files
 fileNameIn1  <- "data.T2D/hmp_cart_50199a791.tsv" # Manifest
 fileNameIn2  <- "data.T2D/hmp_cart_metadata_12019e21a0.tsv" # Metadata
 T2DFileOut <- "data/hmp2_phyloseq_16S_T2D.rda"
-files <- list.files("data.T2D/t2d") # data file list
+files <- list.files(dataDir) # data file list
 green <- read.table("data/gg_13_5_taxonomy.txt", sep = "\t") # greengenes taxonomy file
 ```
 

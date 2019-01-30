@@ -38,7 +38,7 @@ You will need to set the correct paths here for your data.
 
 ```{r settings}
 # Data folder
-dataDir <- "path/to/data/dir"
+dataDir <- "path/to/data/dir" # folder containing .biom files
 # Input files
 # User will need to change paths accordingly to their directory structure
 fileNameIn1  <- "data/hmp_cart_41c0aca569.tsv" # Manifest
@@ -83,7 +83,7 @@ mtx1 <- mtx1[ mtx1$file_name %in% mtx3$X1, ]
 
 ```{r}
 # All biom files
-files <- list.files(path = paste0(dataDir, "ptb/"), pattern = "biom", full.names = TRUE)
+files <- list.files(path = dataDir, pattern = "biom", full.names = TRUE)
 # Sanity check: Are they all in the manifest?
 all.equal(files %>% basename %>% sort, mtx1$file_name %>% sort)
 ```

@@ -4,8 +4,12 @@ output: html_document
 
 # To Do
 
-- Frequency Table 1 - add row "Total", showing the total number of subjects in each study, 100% of all subjects
-    - Totals are wrong, completely.
++ Frequency Table 1 - add row "Total", showing the total number of subjects in each study, 100% of all subjects
+    - change to samples
+    - make patient table
+    - use upsetR package to make plot of body site by patient
+    - histogram of patients by visit number
+    
 
 - Make three frequency histograms of visits, one for each study. **Each bin should represent one visit type, i.e., show how many are "visit 1", "visit 2", etc.** - **geom_histogram(bins = 15)** IS WRONG!
     - Make the histograms nicer. Put them on a single plot. Color studies differently. Look at http://www.sthda.com/english/wiki/ggplot2-histogram-plot-quick-start-guide-r-software-and-data-visualization for good examples
@@ -18,6 +22,8 @@ output: html_document
 > browseVignettes("HMP2Data")
 No vignettes found by browseVignettes("HMP2Data")
 ```
+
+- check HMP16SData
 
 
 - Create a vignette about data processing. Include processing scripts as non-exportable files.

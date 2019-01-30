@@ -43,7 +43,8 @@ Suggests:
     roxygen2,
     stats,
     testthat,
-    tibble
+    tibble,
+    UpSetR
 biocViews:
     ExperimentData,
     Homo_sapiens_Data,

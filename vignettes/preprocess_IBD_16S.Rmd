@@ -19,11 +19,11 @@ options(stringsAsFactors = FALSE)
 
 # Input files
 # Change paths to your data directory
-dataDir <- "data.IBD/ibd/" # path to folder contianing data files
+dataDir <- "data.IBD/ibd/" # path to folder contianing .biom files
 fileNameIn1  <- "data.IBD/hmp_cart_2bcd863c2e.tsv" # Manifest
 fileNameIn2  <- "data.IBD/hmp_cart_metadata_35c73e52bd.tsv" # Metadata
 IBDFileOut <- "data/hmp2_phyloseq_16S_ibd.rda" # file name for IBD phyloseq object
-files <- list.files("data.IBD/ibd") # data files
+files <- list.files(dataDir) # data files
 green <- read.table("data/gg_13_5_taxonomy.txt", sep = "\t") # greengenes taxonomy file
 
 

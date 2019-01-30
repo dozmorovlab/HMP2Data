@@ -81,7 +81,7 @@ Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
 
 ```{r}
 data("momspi16S_mtx")
-momspi16S_mtx[1:5, 1:5]
+momspi16S_mtx[1:5, 1:3]
 ```
 
 Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
@@ -89,7 +89,7 @@ Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns 
 ```{r}
 data("momspi16S_tax")
 colnames(momspi16S_tax)
-momspi16S_tax[1:5, 1:5]
+momspi16S_tax[1:5, 1:3]
 ```
 
 ```{r eval=FALSE, echo=FALSE}
@@ -102,7 +102,7 @@ Load the 16S sample annotation data as a matrix, rows are samples, columns are a
 ```{r}
 data("momspi16S_samp")
 colnames(momspi16S_samp)
-momspi16S_samp[1:5, 1:5]
+momspi16S_samp[1:5, 1:3]
 # Check if sample names match between the 16S and sample data
 # all.equal(colnames(momspi16S_mtx), rownames(momspi16S_samp)) # Should be TRUE
 ```
@@ -269,39 +269,107 @@ list("MOMS-PI 16S" = momspi16S_phyloseq, "MOMS-PI Cytokines" = momspiCyto, "IBD 
 ```
 
 
+And patient level characteristics can be presented as so.
+
+```{r}
+list("MOMS-PI 16S" = momspi16S_phyloseq, "MOMS-PI Cytokines" = momspiCyto, "IBD 16S" = IBD, "T2D 16S" = T2D) %>% patient_table()
+```
+
+
 ## Visits Histograms
 
-Here we plot histograms of the number of samples at each visit for the MOMS-PI 16S data.
+Here we plot histograms of the number of samples at each visit for the data MOMS-PI 16S data. Note that there are `r sum(momspi16S_samp$visit_number > 20)` samples at visit numbers over 20.
 
-```{r}
+```{r, fig.height=4, fig.width=4}
 library(ggplot2)
-library(cowplot)
-
-ggplot(momspi16S_samp, aes(x = visit_number)) + geom_histogram(bins = 67)
+library(gridExtra)
+# set up ggplots
+p1 <- ggplot(momspi16S_samp, aes(x = visit_number)) + geom_histogram(bins = 20, fill = "#00BFC4") +
+  theme(panel.background = element_blank(), panel.grid = element_blank()) + xlim(c(0,20)) + xlab("visit number")
+p1
 ```
 
-Now for the MOMS-PI Cytokines data.
+Here we plot the histogram of the number of samples at each visit for the other studies included in the package. 
+
+```{r, fig.height=4, fig.width=4}
+# make data.frame for plotting
+plot_visits <- data.frame(study = c(rep("MOMS-PI Cytokines", nrow(momspiCyto_samp)),
+                     rep("IBD 16S", nrow(IBD16S_samp)),
+                     rep("T2D 16S", nrow(T2D16S_samp))),
+          visits = c(momspiCyto_samp$visit_number,
+                     IBD16S_samp$visit_number,
+                     T2D16S_samp$visit_number))
+p2 <- ggplot(plot_visits, aes(x = visits, fill = study)) + geom_histogram(position = "dodge", alpha = 0.7, bins = 40) + xlim(c(0,40)) +
+  theme(legend.position = c(0.8, 0.9), panel.background = element_blank(), panel.grid = element_blank())  + xlab("visit number")
+p2
+```
+
+Note that there are `r sum(plot_visits$visits > 40)` samples at visit numbers over 40.
+
+## UpsetR plots
+
+### MOMS-PI 16S rRNA data
+
+Here we plot the body sites which samples were taken from for each patient in the MOMS-PI 16S data.
 
 ```{r}
-ggplot(momspiCyto_samp, aes(x = visit_number)) + geom_histogram(bins = 15)
+library(UpSetR)
+
+# set up data.frame for UpSetR
+momspi_upset <- aggregate(momspi16S_samp$sample_body_site, by = list(momspi16S_samp$subject_id), table)
+tmp <- as.matrix(momspi_upset[, -1])
+tmp <- (tmp > 0) *1
+momspi_upset <- data.frame(patient = momspi_upset$Group.1, tmp)
+
+# plot
+upset(momspi_upset, order.by = 'freq')
 ```
 
-For the IBD data.
+### MOMS-PI Cytokines data
+
+Here we plot the body sites which samples were taken from for each patient in the MOMS-PI cytokines data.
 
 ```{r}
-ggplot(IBD16S_samp, aes(x = visit_number)) + geom_histogram(bins = 24)
+# set up data.frame for UpSetR
+momspiCyto_upset <- aggregate(momspiCyto_samp$sample_body_site, by = list(momspiCyto_samp$subject_id), table)
+tmp <- as.matrix(momspiCyto_upset[, -1])
+tmp <- (tmp > 0) *1
+momspiCyto_upset <- data.frame(patient = momspiCyto_upset$Group.1, tmp)
+
+# plot
+upset(momspiCyto_upset, order.by = 'freq')
 ```
 
-And finally for the T2D data.
+### IBD data
 
-```{r, warning=FALSE}
-# First remove unknown values with 999 code
-T2D16S_samp$visit_number[T2D16S_samp$visit_number == 999] <- NA
-ggplot(T2D16S_samp, aes(x = visit_number)) + geom_histogram(bins = 200)
+The IBD patients only had samples taken from the feces.
+
+<!-- ```{r} -->
+<!-- # set up data.frame for UpSetR -->
+<!-- IBD_upset <- aggregate(IBD16S_samp$sample_body_site, by = list(IBD16S_samp$subject_id), table) -->
+<!-- tmp <- as.matrix(IBD_upset[, -1]) -->
+<!-- tmp <- (tmp > 0) *1 -->
+<!-- IBD_upset <- data.frame(patient = IBD_upset$Group.1, tmp) -->
+
+<!-- # plot -->
+<!-- upset(IBD_upset, order.by = 'freq') -->
+<!-- ``` -->
+
+
+### T2D data
+
+Here we plot the body sites which samples were taken from for each patient in the T2D 16S rRNA data.
+
+```{r}
+# set up data.frame for UpSetR
+T2D_upset <- aggregate(T2D16S_samp$sample_body_site, by = list(T2D16S_samp$subject_id), table)
+tmp <- as.matrix(T2D_upset[, -1])
+tmp <- (tmp > 0) *1
+T2D_upset <- data.frame(patient = T2D_upset$Group.1, tmp)
+
+# plot
+upset(T2D_upset, order.by = 'freq')
 ```
-
-
-
 
 
 # Exporting Data to CSV Format
@@ -358,7 +426,8 @@ write_csv(data.frame(momspi_cytokines), "momspi_cytokines.csv")
 
 # Session Info
 
-```{r message=FALSE}
-if (!(require(xfun))) install.packages(xfun)
-xfun::session_info()
-``JÞhT1
+<!-- ```{r message=FALSE} -->
+<!-- if (!(require(xfun))) install.packages(xfun) -->
+<!-- xfun::session_info() -->
+<!-- ``` -->
+

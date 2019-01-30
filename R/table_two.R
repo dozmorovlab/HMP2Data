@@ -116,8 +116,8 @@ extract_info <- function(x) {
     return(x)
   })
   # add totals
-  tables[[4]] <- matrix(data = c(length(unique(samp$subject_id)), 100), nrow = 1, ncol = 2)
-  rownames(tables[[4]]) <- "**total subjects**"
+  tables[[4]] <- matrix(data = c(nrow(samp), 100), nrow = 1, ncol = 2)
+  rownames(tables[[4]]) <- "**total samples**"
   colnames(tables[[4]]) <- c("N", "%")
   return(tables)
 }
