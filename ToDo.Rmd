@@ -4,14 +4,20 @@ output: html_document
 
 # To Do
 
-+ Frequency Table 1 - add row "Total", showing the total number of subjects in each study, 100% of all subjects
+- Frequency Table 1 - add row "Total", showing the total number of subjects in each study, 100% of all subjects
 
-+ Frequency Table 1 and 2 - make study headers prettier, like "MOMS-PI 16S"
+- Frequency Table 1 and 2 - make study headers prettier, like "MOMS-PI 16S"
 
-+ Make three frequency histograms of visits, one for each study. Each bin should represent one visit type, i.e., show how many are "visit 1", "visit 2", etc. Use ggplot. 
-  - use cowplot
-  
+- Make three frequency histograms of visits, one for each study. Each bin should represent one visit type, i.e., show how many are "visit 1", "visit 2", etc. Use ggplot. 
+
 - Describe in the vignette how to invoke vignettes. `browseVignettes("HMP2Data")` doesn't work.
+    - Even after installing like: `devtools::install_github("jstansfield0/HMP2Data", auth_token = "e1ef7c328f2c14b2627ad113093b65726f9e24d3", build_vignettes = TRUE)`, vignettes still cannot be found:
+```
+> library(HMP2Data)
+> browseVignettes("HMP2Data")
+No vignettes found by browseVignettes("HMP2Data")
+```
+
 
 - Create a vignette about data processing. Include processing scripts as non-exportable files.
     - From `mdozmorov/HMP2` repository, use `preprocess_biom_16S.Rmd`, `preprocess_phyloseq_16S.Rmd`, `preprocess_cytokines.Rmd`, `read_ibd_t2d_biom.Rmd`.
