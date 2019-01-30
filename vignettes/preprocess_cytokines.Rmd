@@ -81,7 +81,7 @@ mtx1 <- mtx1[ mtx1$file_name %in% mtx3$X1, ]
 
 ```{r}
 # All cytokine files
-files <- list.files(path = paste0(dataDir, "ptb/cytokines/"), pattern = "txt.gz", full.names = TRUE)
+files <- list.files(path = dataDir, pattern = "txt.gz", full.names = TRUE)
 # Sanity check: Are they all in the manifest?
 all.equal(files %>% basename %>% sort, mtx1$file_name %>% sort)
 ```

@@ -19,12 +19,14 @@ options(stringsAsFactors = FALSE)
 
 # Input files
 # Change paths to your data directory
+dataDir <- "data.IBD/ibd/" # path to folder contianing data files
 fileNameIn1  <- "data.IBD/hmp_cart_2bcd863c2e.tsv" # Manifest
 fileNameIn2  <- "data.IBD/hmp_cart_metadata_35c73e52bd.tsv" # Metadata
 IBDFileOut <- "data/hmp2_phyloseq_16S_ibd.rda" # file name for IBD phyloseq object
-# files <- list.files("data.IBD/ibd")
-load('data/ibd_readable_files.rda')
-green <- read.table("data/gg_13_5_taxonomy.txt", sep = "\t")
+files <- list.files("data.IBD/ibd") # data files
+green <- read.table("data/gg_13_5_taxonomy.txt", sep = "\t") # greengenes taxonomy file
+
+
 
 ```
 
@@ -47,7 +49,7 @@ all.equal(files %>% basename %>% sort, mtx1$file_name %>% sort)
 phylo_list <- list()
 
 for(i in 1:length(files)) {
-  res <- try(phylo_list[[i]] <- import_biom(paste0("data.IBD/ibd/", files[i])), TRUE)
+  res <- try(phylo_list[[i]] <- import_biom(paste0(dataDir, files[i])), TRUE)
   if(isTRUE(class(res)=="try-error")) { next } else {phylo_list[[i]] <- res}
   # print(i)
 }
@@ -59,7 +61,14 @@ unreadable <- sapply(phylo_list, is.null) # 8 unreadable files
 # update files list with only files that were read
 files <- files[!unreadable]
 save(files, file = 'data/ibd_readable_files.rda')
-phylo_list <- phylo_list[!unreadable]
+
+# RE-Read only the files that are readable
+load('data/ibd_readable_files.rda') # readable files
+for(i in 1:length(files)) {
+  res <- try(phylo_list[[i]] <- import_biom(paste0(dataDir, files[i])), TRUE)
+  if(isTRUE(class(res)=="try-error")) { next } else {phylo_list[[i]] <- res}
+  # print(i)
+}
 
 # Merge data
 # mat <- otu_table(phylo_list[[1]])
