@@ -4,8 +4,9 @@ output: html_document
 
 # To Do
 
-- Create a vignette about data processing. Include processing scripts as non-exportable files.
-    - From `mdozmorov/HMP2` repository, use `preprocess_biom_16S.Rmd`, `preprocess_phyloseq_16S.Rmd`, `preprocess_cytokines.Rmd`, `read_ibd_t2d_biom.Rmd`.
-    - Reorganize the code into a more streamlined set of files, rename, split, combine files, as appropriate.
-    - Make the code generic, e.g., remove absolute paths, add `path/to/something` with comments.
-    - Describe the use of these files in the vignette.
+- Create a private repository `HMP2Data_supplement`
+- Put there the `data_processing.Rmd` vignette and the corresponding data processing files
+- Put there the data files (except biom files) needed for the data processing files to work (look inside them)
+- MD will put Methods in the README.md of this repository
+- We will refer to it from the main package page
+
