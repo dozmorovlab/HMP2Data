@@ -45,7 +45,8 @@ editor_options:
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  warning = FALSE
 )
 ```
 
@@ -67,6 +68,8 @@ library(phyloseq)
 library(SummarizedExperiment)
 library(MultiAssayExperiment)
 library(dplyr)
+library(ggplot2)
+library(UpSetR)
 ```
 
 Once installed, `HMP2Data` provides functions to access the HMP2 data. 
@@ -254,7 +257,7 @@ T2D
 
 ## Frequency Table Generation
 
-The demographic data contianed in `HMP2Data` can be summarized using the `table_two` function. First we need to make a list of the phyloseq and summarized experiment object which can then be entered into the table generating function.
+The sample-level annotation data contianed in `HMP2Data` can be summarized using the `table_two` function. First, we need to make a list of the `phyloseq` and `SummarizedExperiment` objects which can then be entered into the `table_two()` table generating function.
 
 
 ```{r}
@@ -262,14 +265,14 @@ list("MOMS-PI 16S" = momspi16S_phyloseq, "MOMS-PI Cytokines" = momspiCyto, "IBD 
 ```
 
 
-We can also create a table of the break down of samples by visit number quantile.
+We can also create a table of the breakdown of samples by visit number quantile.
 
 ```{r}
 list("MOMS-PI 16S" = momspi16S_phyloseq, "MOMS-PI Cytokines" = momspiCyto, "IBD 16S" = IBD, "T2D 16S" = T2D) %>% visit_table()
 ```
 
 
-And patient level characteristics can be presented as so.
+The patient-level characteristics can be summarized using the `patient_table()` function.
 
 ```{r}
 list("MOMS-PI 16S" = momspi16S_phyloseq, "MOMS-PI Cytokines" = momspiCyto, "IBD 16S" = IBD, "T2D 16S" = T2D) %>% patient_table()
@@ -281,17 +284,18 @@ list("MOMS-PI 16S" = momspi16S_phyloseq, "MOMS-PI Cytokines" = momspiCyto, "IBD 
 Here we plot histograms of the number of samples at each visit for the data MOMS-PI 16S data. Note that there are `r sum(momspi16S_samp$visit_number > 20)` samples at visit numbers over 20.
 
 ```{r, fig.height=4, fig.width=4}
-library(ggplot2)
-library(gridExtra)
 # set up ggplots
-p1 <- ggplot(momspi16S_samp, aes(x = visit_number)) + geom_histogram(bins = 20, fill = "#00BFC4") +
-  theme(panel.background = element_blank(), panel.grid = element_blank()) + xlim(c(0,20)) + xlab("visit number")
+p1 <- ggplot(momspi16S_samp, aes(x = visit_number)) + 
+  geom_histogram(bins = 20, color = "#00BFC4", fill = "lightblue") +
+  xlim(c(0,20)) + xlab("Visit number") + ylab("Count")
+# theme(panel.background = element_blank(), panel.grid = element_blank())
 p1
 ```
 
-Here we plot the histogram of the number of samples at each visit for the other studies included in the package. 
+We can plot the histogram of the number of samples at each visit for all studies. 
+Note that the X-axis is capped at count of 40 for better visualization.
 
-```{r, fig.height=4, fig.width=4}
+```{r, fig.height=4, fig.width=7}
 # make data.frame for plotting
 plot_visits <- data.frame(study = c(rep("MOMS-PI Cytokines", nrow(momspiCyto_samp)),
                      rep("IBD 16S", nrow(IBD16S_samp)),
@@ -299,8 +303,10 @@ plot_visits <- data.frame(study = c(rep("MOMS-PI Cytokines", nrow(momspiCyto_sam
           visits = c(momspiCyto_samp$visit_number,
                      IBD16S_samp$visit_number,
                      T2D16S_samp$visit_number))
-p2 <- ggplot(plot_visits, aes(x = visits, fill = study)) + geom_histogram(position = "dodge", alpha = 0.7, bins = 40) + xlim(c(0,40)) +
-  theme(legend.position = c(0.8, 0.9), panel.background = element_blank(), panel.grid = element_blank())  + xlab("visit number")
+p2 <- ggplot(plot_visits, aes(x = visits, fill = study)) + 
+  geom_histogram(position = "dodge", alpha = 0.7, bins = 20, color = "#00BFC4") + xlim(c(0, 40)) +
+  theme(legend.position = c(0.8, 0.8))  + 
+  xlab("Visit number") + ylab("Count")
 p2
 ```
 
@@ -312,9 +318,7 @@ Note that there are `r sum(plot_visits$visits > 40)` samples at visit numbers ov
 
 Here we plot the body sites which samples were taken from for each patient in the MOMS-PI 16S data.
 
-```{r}
-library(UpSetR)
-
+```{r, fig.height=6, fig.width=10}
 # set up data.frame for UpSetR
 momspi_upset <- aggregate(momspi16S_samp$sample_body_site, by = list(momspi16S_samp$subject_id), table)
 tmp <- as.matrix(momspi_upset[, -1])
@@ -322,7 +326,7 @@ tmp <- (tmp > 0) *1
 momspi_upset <- data.frame(patient = momspi_upset$Group.1, tmp)
 
 # plot
-upset(momspi_upset, order.by = 'freq')
+upset(momspi_upset, order.by = 'freq', matrix.color = "blue", text.scale = 2)
 ```
 
 ### MOMS-PI Cytokines data
@@ -337,7 +341,7 @@ tmp <- (tmp > 0) *1
 momspiCyto_upset <- data.frame(patient = momspiCyto_upset$Group.1, tmp)
 
 # plot
-upset(momspiCyto_upset, order.by = 'freq')
+upset(momspiCyto_upset, order.by = 'freq', matrix.color = "blue", text.scale = 2)
 ```
 
 ### IBD data
@@ -368,7 +372,7 @@ tmp <- (tmp > 0) *1
 T2D_upset <- data.frame(patient = T2D_upset$Group.1, tmp)
 
 # plot
-upset(T2D_upset, order.by = 'freq')
+upset(T2D_upset, order.by = 'freq', matrix.color = "blue", text.scale = 2)
 ```
 
 
