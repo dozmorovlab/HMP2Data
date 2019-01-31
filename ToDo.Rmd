@@ -4,9 +4,6 @@ output: html_document
 
 # To Do
 
-- Create a private repository `HMP2Data_supplement`
-- Put there the `data_processing.Rmd` vignette and the corresponding data processing files
-- Put there the data files (except biom files) needed for the data processing files to work (look inside them)
-- MD will put Methods in the README.md of this repository
+
 - We will refer to it from the main package page
 

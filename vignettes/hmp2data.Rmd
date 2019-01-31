@@ -430,8 +430,7 @@ write_csv(data.frame(momspi_cytokines), "momspi_cytokines.csv")
 
 # Session Info
 
-<!-- ```{r message=FALSE} -->
-<!-- if (!(require(xfun))) install.packages(xfun) -->
-<!-- xfun::session_info() -->
-<!-- ``` -->
+```{r message=FALSE}
+sessionInfo()
+```
 
