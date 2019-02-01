@@ -4,7 +4,8 @@
 ExperimentData package of the Human Microbiome Project (iHMP) 16S rRNA sequencing
 data. Raw data files are provided in the package as downloaded from the
 [iHMP Data Analysis and Coordination Center](https://hmpdacc.org/ihmp/).
-See the [package vignette](vignettes/hmp2data.Rmd) for usage details.
+See the [package vignette](vignettes/hmp2data.Rmd) for usage details. 
+Please, review the [publication moratorium](https://hmpdacc.org/ihmp/overview/datapolicy.php) when using this data.
 
 *[HMP2Data](http://bioconductor.org/packages/HMP2Data)* can be installed
 using *[BiocManager](https://cran.r-project.org/package=BiocManager)* as
