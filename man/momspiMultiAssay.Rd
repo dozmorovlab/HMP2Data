@@ -25,6 +25,9 @@
 \usage{
 momspiMultiAssay()
 }
+\value{
+A multiAssay Experiment object
+}
 \description{
 Construct MultiAssayExperiment for MOMS-PI 16S rRNA
 and cytokines data.
