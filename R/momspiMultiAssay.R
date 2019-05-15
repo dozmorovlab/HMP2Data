@@ -61,14 +61,15 @@ momspiMultiAssay <- function() {
   common_participants <- dplyr::inner_join(momspi16S_samp, momspiCyto_samp,
                                           by = c("subject_id", "sample_body_site", "visit_number",
                                                  "subject_gender", "subject_race", "study_full_name",
-                                                 "project_name"))
+                                                 "project_name",
+                                                 "md5", "urls", "size", "file_id"))
   # Get sample data for samples not in merged data.frame
   uncommon <- rbind(momspi16S_samp[! momspi16S_samp$id %in% common_participants$id.x, ],
                     momspiCyto_samp[! momspiCyto_samp$id %in% common_participants$id.y, ])
   # merge common IDs
   common_participants$id   <- paste0(common_participants$id.x, common_participants$id.y)
   # merge file names
-  common_participants$file <- paste(common_participants$file.x, common_participants$file.y, sep = '.')
+  common_participants$file_name <- paste(common_participants$file_name.x, common_participants$file_name.y, sep = '.')
   # merge sample ids
   common_participants$sample_id <- paste(common_participants$sample_id.x, common_participants$sample_id.y, sep = '.')
   # make sample data.frame, using the same columns line "uncommon" object
@@ -76,9 +77,9 @@ momspiMultiAssay <- function() {
                 uncommon)
 
 
-  rownames(samp) <- samp$file
+  rownames(samp) <- samp$file_name
   # Drop "file" column
-  samp <- dplyr::select(samp, select = -c(file))
+  samp <- dplyr::select(samp, select = -c(file_name))
   ids <- rownames(samp)
   # set up sampleMap
   # assay column: the name of the assay, and found in the names of ExperimentList list names
