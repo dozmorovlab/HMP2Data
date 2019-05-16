@@ -209,7 +209,7 @@ Load the 16S sample annotation data as a matrix, rows are samples, columns are a
 
 ```{r}
 data("IBD16S_samp")
-colnames(IBD16S_samp)
+colnames(IBD16S_samp) %>% head()
 IBD16S_samp[1:5, 1:5]
 ```
 
