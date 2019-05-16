@@ -55,8 +55,8 @@ momspiMultiAssay <- function() {
 
   # make colData
   # add new ID
-  momspi16S_samp$id  <- paste0('a', 1:nrow(momspi16S_samp))
-  momspiCyto_samp$id <- paste0('b', 1:nrow(momspiCyto_samp))
+  momspi16S_samp$id  <- paste0('a', seq(from = 1, to = nrow(momspi16S_samp)))
+  momspiCyto_samp$id <- paste0('b', seq(from = 1, to = nrow(momspiCyto_samp)))
   # merge
   common_participants <- dplyr::inner_join(momspi16S_samp, momspiCyto_samp,
                                           by = c("subject_id", "sample_body_site", "visit_number",
