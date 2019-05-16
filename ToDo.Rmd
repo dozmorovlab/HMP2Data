@@ -1,9 +1,0 @@
----
-output: html_document
----
-
-# To Do
-
-
-- We will refer to it from the main package page
-

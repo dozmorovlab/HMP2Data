@@ -3,7 +3,7 @@
 \name{T2D16S}
 \alias{T2D16S}
 \title{Create HMP2 16S sequencing data for Type 2 Diabetes (T2D) phyloseq object}
-\format{A phyloseq object with 10,815 taxa and 1,319 samples.
+\format{A phyloseq object with 12,062 taxa and 2,208 samples.
 \subsection{OTU Table}{
     A counts matrix for the rRNA-seq results.
 }

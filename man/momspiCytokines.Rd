@@ -4,7 +4,7 @@
 \alias{momspiCytokines}
 \title{Create MOMS-PI cytokines SummarizedExperiment object}
 \format{A SummarizedExperiment object with 29 features
-and 872 samples.
+and 1396 samples.
 \subsection{colData}{
      \describe{
      \item{sample_id}{Sample identifier}

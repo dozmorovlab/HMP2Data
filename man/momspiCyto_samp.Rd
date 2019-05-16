@@ -4,7 +4,7 @@
 \name{momspiCyto_samp}
 \alias{momspiCyto_samp}
 \title{momspiCyto_samp}
-\format{An object of class \code{data.frame} with 872 rows and 9 columns.}
+\format{An object of class \code{data.frame} with 1396 rows and 13 columns.}
 \usage{
 momspiCyto_samp
 }

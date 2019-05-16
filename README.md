@@ -21,6 +21,5 @@ The development version can be installed from this repository (https://github.co
 
 ```r
 library(HMP2Data)
-data("momspi16S")
-data("momspiCytokines")
+MOMSPI16s <- momspi16S()
 ```

@@ -4,7 +4,7 @@
 \name{momspi16S_samp}
 \alias{momspi16S_samp}
 \title{momspi16S_samp}
-\format{An object of class \code{data.frame} with 9107 rows and 9 columns.}
+\format{An object of class \code{data.frame} with 9107 rows and 13 columns.}
 \usage{
 momspi16S_samp
 }

@@ -4,7 +4,7 @@
 \name{T2D16S_samp}
 \alias{T2D16S_samp}
 \title{T2D16S_samp}
-\format{An object of class \code{data.frame} with 1319 rows and 10 columns.}
+\format{An object of class \code{data.frame} with 2208 rows and 13 columns.}
 \usage{
 T2D16S_samp
 }

@@ -4,7 +4,7 @@
 \name{momspiCyto_mtx}
 \alias{momspiCyto_mtx}
 \title{momspiCyto_mtx}
-\format{An object of class \code{matrix} with 29 rows and 872 columns.}
+\format{An object of class \code{matrix} with 29 rows and 1396 columns.}
 \usage{
 momspiCyto_mtx
 }

@@ -4,7 +4,7 @@
 \name{IBD16S_samp}
 \alias{IBD16S_samp}
 \title{IBD16S_samp}
-\format{An object of class \code{data.frame} with 1435 rows and 11 columns.}
+\format{An object of class \code{data.frame} with 178 rows and 490 columns.}
 \usage{
 IBD16S_samp
 }
