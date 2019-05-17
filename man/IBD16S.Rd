@@ -3,23 +3,16 @@
 \name{IBD16S}
 \alias{IBD16S}
 \title{Create HMP2 16S sequencing data for Inflammatory Bowel Disease (IBD) phyloseq object}
-\format{A phyloseq object with 1,777 taxa and 1,435 samples.
+\format{A phyloseq object with 982 taxa and 178 samples.
 \subsection{OTU Table}{
     A counts matrix for the rRNA-seq results.
 }
 \subsection{Sample Data}{
    \describe{
-      \item{file_id}{The file ID}
+      \item{Project}{Name of the project}
       \item{sample_id}{Sample identifier}
-      \item{file_name}{Name of file data was from}
-      \item{subject_id}{Participant identifier}
-      \item{sample_body_site}{Body site of the sample}
-      \item{visit_number}{Visit number}
-      \item{subject_gender}{Participant gender}
-      \item{subject_race}{Participant race}
-      \item{study_full_name}{Name of the study}
-      \item{project_name}{Name of the project}
-      \item{sample_fecalcal}{sample fecal calprotectin}
+      \item{subject_id}{Subject identifier}
+      See colnames(sample_data(IBD16S())) for remaining values.
    }
 }
 \subsection{Taxonomy Table}{

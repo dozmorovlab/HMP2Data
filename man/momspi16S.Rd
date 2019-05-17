@@ -9,14 +9,19 @@
 }
 \subsection{Sample Data}{
    \describe{
+      \item{file_id}{File identifier}
+      \item{md5}{md5 hash for the file}
+      \item{size}{file size}
+      \item{urls}{URL for the file}
       \item{sample_id}{Sample identifier}
+      \item{file_name}{Filename which the sample was taken from}
       \item{subject_id}{Participant identifier}
       \item{sample_body_site}{Body site of the sample}
       \item{visit_number}{Visit number}
       \item{subject_gender}{Participant gender}
       \item{subject_race}{Participant race}
       \item{study_full_name}{Name of the study}
-      \item{file}{Filename which the sample was taken from}
+      \item{project_name}{Name of project}
    }
 }
 \subsection{Taxonomy Table}{

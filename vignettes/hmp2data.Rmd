@@ -4,19 +4,13 @@ author:
 - name: John Stansfield
   affiliation:
   - &1 Virginia Commonwealth University, Richmond, VA
-- name: Shujian Zhang
-  affiliation:
-  - &2 The Johns Hopkins University, Baltimore, MD
-- name: Ni Zhao
-  affiliation:
-  - *2
-- name: Levi Waldron
-  affiliation:
-  - &3 Graduate School of Public Health and Health Policy, City University of New York, New York, NY
-  - &4 Institute for Implementation Science in Population Health, City University of New York, New York, NY
 - name: Ekaterina Smirnova
   affiliation:
   - *1
+- name: Levi Waldron
+  affiliation:
+  - &2 Graduate School of Public Health and Health Policy, City University of New York, New York, NY
+  - &3 Institute for Implementation Science in Population Health, City University of New York, New York, NY
 - name: Mikhail Dozmorov
   affiliation:
   - *1
@@ -190,14 +184,14 @@ completeMA
 
 # IBD
 
-Load 16S data as a matrix, rows are Greengene IDs, columns are sample names:
+Load 16S data as a matrix, rows are SILVA IDs, columns are sample names:
 
 ```{r}
 data("IBD16S_mtx")
 IBD16S_mtx[1:5, 1:5]
 ```
 
-Load the Greengenes taxonomy table as a matrix, rows are Greengene IDs, columns are taxonomic ranks:
+Load the SILVA taxonomy table as a matrix, rows are SILVA IDs, columns are taxonomic ranks:
 
 ```{r}
 data("IBD16S_tax")
@@ -304,7 +298,7 @@ plot_visits <- data.frame(study = c(rep("MOMS-PI Cytokines", nrow(momspiCyto_sam
                      IBD16S_samp$visit_number,
                      T2D16S_samp$visit_number))
 p2 <- ggplot(plot_visits, aes(x = visits, fill = study)) + 
-  geom_histogram(position = "dodge", alpha = 0.7, bins = 20, color = "#00BFC4") + xlim(c(0, 40)) +
+  geom_histogram(position = "dodge", alpha = 0.7, bins = 30, color = "#00BFC4") + xlim(c(0, 40)) +
   theme(legend.position = c(0.8, 0.8))  + 
   xlab("Visit number") + ylab("Count")
 p2
