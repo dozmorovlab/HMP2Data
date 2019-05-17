@@ -11,7 +11,9 @@
 #' @importFrom kableExtra add_header_above
 #' @importFrom data.table rbindlist
 #' @examples
-#' table_two(list(momspi16S = momspi16S(), momspiCytokines = momspiCytokines(), IBD16S = IBD16S(), T2D16S = T2D16S()))
+#' table_two(list(momspi16S = momspi16S(),
+#'   momspiCytokines = momspiCytokines(),
+#'   IBD16S = IBD16S(), T2D16S = T2D16S()))
 table_two <- function(x) {
   # check that x is a named list
   if (class(x) != "list") {

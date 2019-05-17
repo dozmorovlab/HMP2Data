@@ -10,7 +10,9 @@
 #' @importFrom knitr kable
 #' @importFrom kableExtra add_header_above
 #' @examples
-#' visit_table(list(momspi16S = momspi16S(), momspiCytokines = momspiCytokines(), IBD16S = IBD16S(), T2D16S = T2D16S()))
+#' visit_table(list(momspi16S = momspi16S(),
+#'   momspiCytokines = momspiCytokines(),
+#'   IBD16S = IBD16S(), T2D16S = T2D16S()))
 
 visit_table <- function(x) {
   visits <- lapply(x, extract_info2)

@@ -18,5 +18,7 @@ This function allows you to produce a summary table for
 the HMP2Data data sets.
 }
 \examples{
-patient_table(list(momspi16S = momspi16S(), momspiCytokines = momspiCytokines(), IBD16S = IBD16S(), T2D16S = T2D16S()))
+patient_table(list(momspi16S = momspi16S(),
+  momspiCytokines = momspiCytokines(),
+  IBD16S = IBD16S(), T2D16S = T2D16S()))
 }
