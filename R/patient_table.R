@@ -16,7 +16,7 @@
 #'   IBD16S = IBD16S(), T2D16S = T2D16S()))
 patient_table <- function(x) {
   # check that x is a named list
-  if (class(x) != "list") {
+  if (! is(x, "list")) {
     stop("You must enter a named list")
   }
   if (is.null(names(x))) {
@@ -70,13 +70,13 @@ patient_table <- function(x) {
 
 extract_info3 <- function(y) {
   # check if summarizedExperiment or phyloseq object
-  if(class(y) == "SummarizedExperiment") {
+  if(is(y,"SummarizedExperiment")) {
     samp <- colData(y)
   }
-  if(class(y) == "phyloseq") {
+  if(is(y, "phyloseq")) {
     samp <- sample_data(y)
   }
-  if(class(y) != "SummarizedExperiment" & class(y) != "phyloseq") {
+  if(!is(y, "SummarizedExperiment") & !is(y,"phyloseq")) {
     stop("Only enter phyloseq or SummarizedExperiment objects")
   }
   sex <- aggregate(samp$subject_gender, by = list(samp$subject_id), function(x) table(factor(x,

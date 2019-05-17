@@ -16,7 +16,7 @@
 #'   IBD16S = IBD16S(), T2D16S = T2D16S()))
 table_two <- function(x) {
   # check that x is a named list
-  if (class(x) != "list") {
+  if (!is(x, "list")) {
     stop("You must enter a named list")
   }
   if (is.null(names(x))) {
@@ -86,13 +86,13 @@ table_two <- function(x) {
 # function to extract info from the tables
 extract_info <- function(x) {
   # check if summarizedExperiment or phyloseq object
-  if(class(x) == "SummarizedExperiment") {
+  if(is(x, "SummarizedExperiment")) {
     samp <- colData(x)
   }
-  if(class(x) == "phyloseq") {
+  if(is(x, "phyloseq")) {
     samp <- sample_data(x)
   }
-  if(class(x) != "SummarizedExperiment" & class(x) != "phyloseq") {
+  if(!is(x, "SummarizedExperiment") & !is(x, "phyloseq")) {
     stop("Only enter phyloseq or SummarizedExperiment objects")
   }
   # get tables of items

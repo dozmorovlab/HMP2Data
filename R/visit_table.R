@@ -60,13 +60,13 @@ visit_table <- function(x) {
 
 extract_info2 <- function(x) {
   # check if summarizedExperiment or phyloseq object
-  if(class(x) == "SummarizedExperiment") {
+  if(is(x, "SummarizedExperiment")) {
     samp <- colData(x)
   }
-  if(class(x) == "phyloseq") {
+  if(is(x, "phyloseq")) {
     samp <- sample_data(x)
   }
-  if(class(x) != "SummarizedExperiment" & class(x) != "phyloseq") {
+  if(!is(x, "SummarizedExperiment") & !is(x, "phyloseq")) {
     stop("Only enter phyloseq or SummarizedExperiment objects")
   }
   # get visit tables
