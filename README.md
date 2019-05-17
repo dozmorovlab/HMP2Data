@@ -21,9 +21,9 @@ BiocManager::install("HMP2Data")
 
 The vignettes can be browsed using `browseVignettes("HMP2Data")`.
 
-The development version can be installed from this repository (https://github.com/jstansfield0/HMP2Data)[https://github.com/jstansfield0/HMP2Data] using `r BiocStyle::CRANpkg("devtools")`. Install the package using the command `devtools::install_github("jstansfield0/HMP2Data")`.
+The development version can be installed from this repository [https://github.com/jstansfield0/HMP2Data](https://github.com/jstansfield0/HMP2Data) using `r BiocStyle::CRANpkg("devtools")`. Install the package using the command `devtools::install_github("jstansfield0/HMP2Data")`.
 
-The stable version is available at the dozmorovlab GitHub repository (https://github.com/dozmorovlab/HMP2Data)[https://github.com/dozmorovlab/HMP2Data] and can be installed using the command `devtools::install_github("dozmorovlab/HMP2Data")`.
+The stable version is available at the dozmorovlab GitHub repository [https://github.com/dozmorovlab/HMP2Data](https://github.com/dozmorovlab/HMP2Data) and can be installed using the command `devtools::install_github("dozmorovlab/HMP2Data")`.
 
 
 ## Usage example
