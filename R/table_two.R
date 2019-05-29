@@ -56,8 +56,6 @@ table_two <- function(x) {
   tables <- rbind(tables[1:13,], c("**Race**", rep("", ncol(tables) - 1)), tables[14:21, ])
   # replace underscores with spaces
   tables$vars <- gsub("_", " ", tables$vars)
-  # total row
-  # totals <- c("total", sum(tables[,2]), "100", sum(tables[,4]), "100", sum(tables[,6]))
 
   # set up extra column headers
   column_names <-
@@ -74,8 +72,6 @@ table_two <- function(x) {
     c(1, .) %>%
     as.character() %>%
     magrittr::set_names(header_names)
-  # header_vector <- c(2, 2, 2, 2, 2)
-  # names(header_vector) <- c(" ", names(x))
   rownames(tables) <- NULL
   final <- knitr::kable(tables) %>% kableExtra::kable_styling(bootstrap_options = "condensed", full_width = TRUE) %>%
     kableExtra::add_header_above(header = header_vector)

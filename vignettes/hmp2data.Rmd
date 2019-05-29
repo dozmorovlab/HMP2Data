@@ -7,10 +7,13 @@ author:
 - name: Ekaterina Smirnova
   affiliation:
   - *1
+- name: Ni Zhao
+  affiliation:
+  - &2 The Johns Hopkins University, Baltimore, MD
 - name: Levi Waldron
   affiliation:
-  - &2 Graduate School of Public Health and Health Policy, City University of New York, New York, NY
-  - &3 Institute for Implementation Science in Population Health, City University of New York, New York, NY
+  - &3 Graduate School of Public Health and Health Policy, City University of New York, New York, NY
+  - &4 Institute for Implementation Science in Population Health, City University of New York, New York, NY
 - name: Mikhail Dozmorov
   affiliation:
   - *1
@@ -50,8 +53,19 @@ knitr::opts_chunk$set(
 `HMP2Data` can be installed using `BiocManager` as follows.
 
 ```{r, eval = FALSE}
+# Check if BiocManager is installed
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+# Install HMP2Data package using BiocManager
 BiocManager::install("HMP2Data")
 ```
+
+Or the development version of the package can be installed from GitHub as shown below.
+
+```{r, eval = FALSE}
+BiocManager::install("jstansfield0/HMP2Data")
+```
+
 
 The following packages will be used in this vignette to provide demonstrative
 examples of what a user might do with `r BiocStyle::Biocpkg("HMP2Data")`.

@@ -57,7 +57,6 @@ visit_table <- function(x) {
 
 
 
-
 extract_info2 <- function(x) {
   # check if summarizedExperiment or phyloseq object
   if(is(x, "SummarizedExperiment")) {

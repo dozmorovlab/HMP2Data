@@ -33,7 +33,6 @@ patient_table <- function(x) {
     tables <- cbind(vars, tables)
   } else {
     tables <- tables[[1]]
-    # tables <- tables[, c('variable', 'N', '%')]
     colnames(tables)[1] <- 'vars'
   }
   # add in headers for sections
@@ -57,8 +56,6 @@ patient_table <- function(x) {
     c(1, .) %>%
     as.character() %>%
     magrittr::set_names(header_names)
-  # header_vector <- c(2, 2, 2, 2, 2)
-  # names(header_vector) <- c(" ", names(x))
   rownames(tables) <- NULL
   final <- knitr::kable(tables) %>% kableExtra::kable_styling(bootstrap_options = "condensed", full_width = TRUE) %>%
     kableExtra::add_header_above(header = header_vector)
