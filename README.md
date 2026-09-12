@@ -37,7 +37,10 @@ required by several dependencies, then restart R and retry installation.
 3. Reinstall dependencies and the package in one call:
 
 ```r
-BiocManager::install(c("phyloseq", "SummarizedExperiment", "MultiAssayExperiment", "HMP2Data"))
+BiocManager::install(c(
+  "RcppArmadillo", "Matrix", "nlme", "mgcv", "ape",
+  "phyloseq", "SummarizedExperiment", "MultiAssayExperiment", "HMP2Data"
+))
 ```
 
 The vignettes can be browsed using `browseVignettes("HMP2Data")`.
