@@ -1,3 +1,4 @@
 Preparing for release
 
 - Add installation troubleshooting guidance for dependency compilation failures.
+- Remove the stale `dplyr::id` import so installation works with newer dplyr releases.

@@ -29,7 +29,6 @@
 #' }
 #' @return A multiAssay Experiment object
 #' @import MultiAssayExperiment
-#' @importFrom dplyr id
 #' @export
 #' @examples momspiMA <- momspiMultiAssay()
 momspiMultiAssay <- function() {
