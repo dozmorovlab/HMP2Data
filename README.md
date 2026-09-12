@@ -19,6 +19,27 @@ follows.
 BiocManager::install("HMP2Data")
 ```
 
+If installation fails while compiling dependencies (for example, `RcppArmadillo`,
+`Matrix`, `nlme`, `mgcv`, `ape`, `phyloseq`, or `MultiAssayExperiment`), this
+usually indicates an R toolchain/environment problem rather than an issue in
+`HMP2Data` itself. In that case:
+
+1. Confirm Bioconductor is configured for your current R version:
+
+```r
+BiocManager::version()
+BiocManager::valid()
+```
+
+2. On macOS, install/update command line compilers and a Fortran toolchain
+required by several dependencies, then restart R and retry installation.
+
+3. Reinstall dependencies and the package in one call:
+
+```r
+BiocManager::install(c("phyloseq", "SummarizedExperiment", "MultiAssayExperiment", "HMP2Data"))
+```
+
 The vignettes can be browsed using `browseVignettes("HMP2Data")`.
 
 The development version can be installed from this repository [https://github.com/jstansfield0/HMP2Data](https://github.com/jstansfield0/HMP2Data) using `r BiocStyle::CRANpkg("devtools")`. Install the package using the command `devtools::install_github("jstansfield0/HMP2Data")`.
